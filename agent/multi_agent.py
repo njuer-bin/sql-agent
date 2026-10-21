@@ -150,12 +150,14 @@ class AttributionExpert:
 
     @classmethod
     def _redate_window(cls, sql: str, start: str, end: str,
+                       window: tuple[str, str] | None = None,
                        ) -> tuple[str | None, str, str]:
         """把 SQL 里最后一个 BETWEEN 改写成指定窗口（基线取数的通用改写）。
 
+        window 不给时默认按日历切法取上一周期（整体月窗口→上月）。
         返回 (new_sql | None, n0, n1)。
         """
-        n0, n1 = cls._prev_month_window(start, end)
+        n0, n1 = window if window is not None else cls._prev_month_window(start, end)
         if n0 is None:
             return None, "", ""
         pat = re.compile(
@@ -306,8 +308,26 @@ class AttributionExpert:
             out.sql = cur_sql
             out.steps += 1
 
-        # 步骤 2：拉基线（上一周期同口径，日历正确切月：整月→上一自然月）
-        baseline_sql, n0, n1 = (self._redate_window(cur_sql, start, end)
+        # 步骤 1.5：解析显式对比句「7 月比 8 月…」→ 参照月 + 前提方向
+        claim: tuple[str, str] | None = None
+        ref_m = re.search(r"(?:比|较|和|与|同|跟)\s*(?:去年)?\s*(\d{1,2})\s*月", text)
+        if period and ref_m:
+            rmm = int(ref_m.group(1))
+            yy = int(start[:4])
+            if 1 <= rmm <= 12:
+                cdir = ("下降" if re.search(r"低|降|减少|变少", text)
+                        else "上升" if re.search(r"高|升|涨|增长|增加", text) else None)
+                claim = (f"{yy}-{rmm:02d}", cdir or "")
+
+        # 步骤 2：拉基线（默认上一自然月；有显式参照月「比 N 月」时以 N 月为准）
+        baseline_window = None
+        if claim:
+            yx, mx = int(claim[0][:4]), int(claim[0][5:7])
+            ref_e = (date(yx + 1, 1, 1) - timedelta(days=1)) if mx == 12 else (
+                date(yx, mx + 1, 1) - timedelta(days=1))
+            baseline_window = (f"{claim[0]}-01", ref_e.isoformat())
+        baseline_sql, n0, n1 = (self._redate_window(cur_sql, start, end,
+                                                    window=baseline_window)
                                 if cur_sql else (None, "", ""))
         val_prev = self._run_sql_value(baseline_sql) if baseline_sql else None
         baseline_ok = val_prev is not None
@@ -379,7 +399,7 @@ class AttributionExpert:
         # 步骤 7：结论组装
         body = self._compose(text, metric, region, window_txt,
                              (cur_ok, val_cur, baseline_ok, val_prev),
-                             ep, procs, sems, newold, ch_rows)
+                             ep, procs, sems, newold, ch_rows, claim)
         out.answer = body["text"]
         out.evidence = body["evidence"]
         measured = {}
@@ -409,19 +429,30 @@ class AttributionExpert:
     # ---- 结论组装 -----------------------------------------------------------
 
     def _compose(self, text, metric, region, window_txt, run, ep, procs, sems,
-                 newold, ch_rows) -> dict:
+                 newold, ch_rows, claim=None) -> dict:
         cur_ok, val_cur, baseline_ok, val_prev = run
         label = self._METRIC_LABEL.get(metric, metric or "")
         ev = ["时间窗口定位"]
         parts: list[str] = []
+        ref_name = claim[0] if claim else None
 
         # 0) 直接回答题目（先给结论，再给证据链）
         if cur_ok and baseline_ok and val_prev:
             pct = (val_cur - val_prev) / abs(val_prev) * 100.0
             trend = "上升" if pct > 0 else ("下降" if pct < 0 else "持平")
             pp = val_cur - val_prev
+            vs = f"较 {ref_name}" if ref_name else "较上一周期"
+            # 前提对账：「A 比 B 更低/更高」与实测方向相反时先修正前提
+            cdir = claim[1] if claim else None
+            if claim and cdir and trend != cdir and trend != "持平":
+                word_for = {"上升": "更高", "下降": "更低"}
+                parts.append(
+                    f"前提修正：您说的是「{label}{vs[1:]}{word_for.get(cdir, '')}」，"
+                    f"但实测相反：本窗口 {label} {trend} {fmt_num(abs(pp))} 个百分点"
+                    f"（{fmt_num(val_cur)}% vs {fmt_num(val_prev)}%）。"
+                    "先修正前提，再谈原因。")
             opener = (f"直接结论：{f'{region} ' if region else ''}{label}"
-                      f"本周期较上一周期{trend}约 {fmt_num(abs(pp))} 个百分点"
+                      f"本周期{vs}{trend}约 {fmt_num(abs(pp))} 个百分点"
                       f"（{fmt_num(val_cur)}% vs {fmt_num(val_prev)}%）。")
             if ep and trend == "下降" and pct <= -30.0:
                 opener += (f"主因判断：上一周期基数被一次性事件抬高（见下方【{ep.get('title')}】），"
@@ -432,11 +463,10 @@ class AttributionExpert:
         # 1) 现象与基线（量化）
         if cur_ok and baseline_ok:
             if val_prev:
-                pct = (val_cur - val_prev) / abs(val_prev) * 100.0
-                trend = "上升" if pct > 0 else ("下降" if pct < 0 else "持平")
                 parts.append(
-                    f"基线对比：{label}上一周期 {fmt_num(val_prev)}，本周期 {fmt_num(val_cur)}"
-                    f"，{trend}约 {fmt_num(abs(pct))}%。")
+                    f"基线对比：{label}{'参照期' if ref_name else '上一周期'} "
+                    f"{fmt_num(val_prev)}，本窗口 {fmt_num(val_cur)}，"
+                    f"{'较 ' + ref_name if ref_name else ''}变化约 {fmt_num(abs(pct))}%。")
             else:
                 parts.append(
                     f"基线对比：{label}上一周期无数据/为 0，本周期 {fmt_num(val_cur)}。")
