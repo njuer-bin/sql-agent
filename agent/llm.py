@@ -136,3 +136,36 @@ def extract_json(text: str) -> dict[str, Any] | None:
                 except json.JSONDecodeError:
                     return None
     return None
+
+
+# ---------------------------------------------------------------- W6 路由 ---
+
+class ModelRouter:
+    """多模型路由 + fallback（PLAN.md W6）：主模型挂了自动降级到次选。
+
+    - cfgs 依次试用；None 表示「离线兜底」，此时返回 (None, "offline")，
+      由调用方进入确定性 fallback（nl2sql_offline / 模板），绝不盲猜。
+    - 只在「连接/网络/HTTP ≥500/格式」类错误上降级；HTTP 401/402/403 属配置
+      类错误，同样降级（用户换 key 前其余通道先顶上，都试完才失败）。
+    - 载荷估算 tokens 计入返回，供成本统计。
+    """
+
+    def __init__(self, cfgs: list[LLMConfig | None] | None = None) -> None:
+        self.cfgs = cfgs if cfgs is not None else [LLMConfig(), None]
+
+    def complete(self, messages: list[dict],
+                 temperature: float = 0.0) -> tuple[str | None, str]:
+        """返回 (文本|None, 使用通道)。全失败则 (None, 'offline')。"""
+        for i, cfg in enumerate(self.cfgs):
+            label = cfg.model if cfg is not None else "offline"
+            if cfg is not None and not cfg.enabled:
+                continue  # 未配置的通道跳过
+            if cfg is None:
+                return None, "offline"
+            try:
+                text = chat(messages, cfg=cfg, temperature=temperature)
+                if text is not None and text.strip():
+                    return text, label
+            except Exception:  # noqa: BLE001  任何通道失败 → 试下一个
+                continue
+        return None, "offline"

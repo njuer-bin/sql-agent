@@ -12,6 +12,9 @@
     "evidence_acc": 0.1111,
     "n_data": 25,
     "n_memory": 21,
+    "avg_steps": 1.2,
+    "avg_tokens": 309.0,
+    "avg_latency_ms": 22.0,
     "by_category": {
       "a_basic": {
         "n": 8,
@@ -84,7 +87,7 @@
     "memory_answer_acc": 0.9147,
     "memory_retrieval_acc": 1.0,
     "adapter": "memory",
-    "elapsed_sec": 1.37
+    "elapsed_sec": 1.06
   },
   "verdicts": [
     {
@@ -103,7 +106,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 70,
+      "latency_ms": 41
     },
     {
       "qid": "A-002",
@@ -121,7 +127,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 59,
+      "latency_ms": 0
     },
     {
       "qid": "A-003",
@@ -139,7 +148,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 154,
+      "latency_ms": 38
     },
     {
       "qid": "A-004",
@@ -157,7 +169,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 77,
+      "latency_ms": 30
     },
     {
       "qid": "A-005",
@@ -175,7 +190,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 93,
+      "latency_ms": 24
     },
     {
       "qid": "A-006",
@@ -193,7 +211,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 99,
+      "latency_ms": 88
     },
     {
       "qid": "A-007",
@@ -211,7 +232,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 59,
+      "latency_ms": 0
     },
     {
       "qid": "A-008",
@@ -229,7 +253,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 73,
+      "latency_ms": 0
     },
     {
       "qid": "B-001",
@@ -247,7 +274,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 155,
+      "latency_ms": 27
     },
     {
       "qid": "B-002",
@@ -265,7 +295,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 207,
+      "latency_ms": 47
     },
     {
       "qid": "B-003",
@@ -283,7 +316,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 164,
+      "latency_ms": 33
     },
     {
       "qid": "B-004",
@@ -301,7 +337,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 125,
+      "latency_ms": 1
     },
     {
       "qid": "B-005",
@@ -319,7 +358,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 186,
+      "latency_ms": 32
     },
     {
       "qid": "B-006",
@@ -337,7 +379,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 143,
+      "latency_ms": 26
     },
     {
       "qid": "B-007",
@@ -355,7 +400,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 116,
+      "latency_ms": 70
     },
     {
       "qid": "B-008",
@@ -373,7 +421,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 150,
+      "latency_ms": 51
     },
     {
       "qid": "C-001",
@@ -393,7 +444,10 @@
         "sem-repurchase-v2",
         "pr-repurchase-v2-rule"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 451,
+      "latency_ms": 0
     },
     {
       "qid": "C-002",
@@ -412,7 +466,10 @@
       "matched_memory_ids": [
         "sem-aov-v1"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 660,
+      "latency_ms": 0
     },
     {
       "qid": "C-003",
@@ -432,7 +489,10 @@
         "sem-gmv-gross-v1",
         "sem-gmv-net-v1"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 661,
+      "latency_ms": 0
     },
     {
       "qid": "C-004",
@@ -451,7 +511,10 @@
       "matched_memory_ids": [
         "sem-newbuyer-v1"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 220,
+      "latency_ms": 0
     },
     {
       "qid": "C-005",
@@ -470,7 +533,10 @@
       "matched_memory_ids": [
         "sem-refund-rate-v1"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 517,
+      "latency_ms": 0
     },
     {
       "qid": "C-006",
@@ -489,7 +555,10 @@
       "matched_memory_ids": [
         "sem-sessions-unverified"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 498,
+      "latency_ms": 0
     },
     {
       "qid": "D-001",
@@ -508,7 +577,10 @@
       "matched_memory_ids": [
         "ep-2026-10-newbuyer"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 693,
+      "latency_ms": 0
     },
     {
       "qid": "D-002",
@@ -527,7 +599,10 @@
       "matched_memory_ids": [
         "ep-2026-08-subsidy"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 2,
+      "tokens": 622,
+      "latency_ms": 46
     },
     {
       "qid": "D-003",
@@ -546,7 +621,10 @@
       "matched_memory_ids": [
         "ep-2026-09-logistics"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 2,
+      "tokens": 424,
+      "latency_ms": 44
     },
     {
       "qid": "D-004",
@@ -566,7 +644,10 @@
         "ep-2026-06-dataquality",
         "sem-cancel-trap-v1"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 2,
+      "tokens": 656,
+      "latency_ms": 47
     },
     {
       "qid": "D-005",
@@ -585,7 +666,10 @@
       "matched_memory_ids": [
         "ep-2026-03-promo"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 2,
+      "tokens": 722,
+      "latency_ms": 34
     },
     {
       "qid": "D-006",
@@ -604,7 +688,10 @@
       "matched_memory_ids": [
         "ep-2026-04-douyin"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 186,
+      "latency_ms": 0
     },
     {
       "qid": "E-001",
@@ -623,7 +710,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "E-002",
@@ -642,7 +732,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 135,
+      "latency_ms": 27
     },
     {
       "qid": "E-003",
@@ -661,7 +754,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 87,
+      "latency_ms": 23
     },
     {
       "qid": "E-004",
@@ -681,7 +777,10 @@
         "pr-repurchase-v2-rule",
         "sem-repurchase-v2"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 2,
+      "tokens": 742,
+      "latency_ms": 29
     },
     {
       "qid": "F-001",
@@ -701,7 +800,10 @@
         "sem-repurchase-v1",
         "sem-repurchase-v2"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 653,
+      "latency_ms": 0
     },
     {
       "qid": "F-002",
@@ -720,7 +822,10 @@
       "matched_memory_ids": [
         "sem-repurchase-v1"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 2,
+      "tokens": 740,
+      "latency_ms": 27
     },
     {
       "qid": "F-003",
@@ -739,7 +844,10 @@
       "matched_memory_ids": [
         "pr-repurchase-v2-rule"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 2,
+      "tokens": 573,
+      "latency_ms": 24
     },
     {
       "qid": "F-004",
@@ -758,7 +866,10 @@
       "matched_memory_ids": [
         "sem-aov-v1"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 323,
+      "latency_ms": 0
     },
     {
       "qid": "G-001",
@@ -777,7 +888,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 112,
+      "latency_ms": 23
     },
     {
       "qid": "G-002",
@@ -796,7 +910,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 105,
+      "latency_ms": 23
     },
     {
       "qid": "G-003",
@@ -815,7 +932,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 88,
+      "latency_ms": 24
     },
     {
       "qid": "G-004",
@@ -834,7 +954,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 103,
+      "latency_ms": 25
     },
     {
       "qid": "G-005",
@@ -853,7 +976,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 134,
+      "latency_ms": 23
     },
     {
       "qid": "G-006",
@@ -872,7 +998,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 88,
+      "latency_ms": 39
     },
     {
       "qid": "H-001",
@@ -891,7 +1020,10 @@
       "matched_memory_ids": [
         "sem-repurchase-v2"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 619,
+      "latency_ms": 0
     },
     {
       "qid": "H-002",
@@ -910,7 +1042,10 @@
       "matched_memory_ids": [
         "ep-2026-06-dataquality"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 2,
+      "tokens": 656,
+      "latency_ms": 44
     },
     {
       "qid": "H-003",
@@ -929,7 +1064,10 @@
       "matched_memory_ids": [
         "ep-2026-10-newbuyer"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 2,
+      "tokens": 661,
+      "latency_ms": 1
     },
     {
       "qid": "H-004",
@@ -948,7 +1086,10 @@
       "matched_memory_ids": [
         "pr-attribution-playbook"
       ],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 137,
+      "latency_ms": 0
     }
   ]
 }

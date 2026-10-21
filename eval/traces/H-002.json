@@ -1,0 +1,37 @@
+{
+  "qid": "H-002",
+  "n_events": 4,
+  "events": [
+    {
+      "t": 0.0,
+      "phase": "route",
+      "name": "supervisor→retrieval",
+      "ok": true,
+      "detail": {
+        "dag": [
+          "memory_retrieve",
+          "answer_compose",
+          "evidence_trace"
+        ]
+      }
+    },
+    {
+      "t": 0.038,
+      "phase": "retrieve",
+      "name": "memory_research",
+      "ok": true
+    },
+    {
+      "t": 0.038,
+      "phase": "tool",
+      "name": "tool_output",
+      "ok": true
+    },
+    {
+      "t": 0.038,
+      "phase": "answer",
+      "name": "done",
+      "ok": true
+    }
+  ]
+}

@@ -103,6 +103,9 @@ class Verdict:
     memory_hit: float = 0.0
     matched_memory_ids: list[str] = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
+    steps: int = 0
+    tokens: int = 0
+    latency_ms: int = 0
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -351,6 +354,9 @@ def score_question(question: dict, out: AgentOutput) -> Verdict:
         memory_hit=round(scores.get("retrieval", 0.0), 4),
         matched_memory_ids=score_memory(question, out)[1],
         notes=[],
+        steps=out.steps,
+        tokens=out.tokens,
+        latency_ms=out.latency_ms,
     )
 
 
@@ -389,6 +395,10 @@ def aggregate(verdicts: list[Verdict]) -> dict:
         "evidence_acc": _mean(v.scores.get("evidence", 0.0) for v in attr_qs),
         "n_data": len(data_qs),
         "n_memory": len(mem_qs),
+        # W6 成本统计：每题平均步数 / token / 延迟（离线 agent tokens=0）
+        "avg_steps": round(_mean(v.steps for v in verdicts), 2),
+        "avg_tokens": round(_mean(v.tokens for v in verdicts), 1),
+        "avg_latency_ms": round(_mean(v.latency_ms for v in verdicts), 1),
     }
 
     by_cat = {}

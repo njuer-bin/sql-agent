@@ -12,6 +12,9 @@
     "evidence_acc": 0.1111,
     "n_data": 25,
     "n_memory": 21,
+    "avg_steps": 0.35,
+    "avg_tokens": 54.3,
+    "avg_latency_ms": 9.7,
     "by_category": {
       "a_basic": {
         "n": 8,
@@ -84,7 +87,7 @@
     "memory_answer_acc": 0.0,
     "memory_retrieval_acc": 0.0,
     "adapter": "single-shot",
-    "elapsed_sec": 0.5
+    "elapsed_sec": 0.46
   },
   "verdicts": [
     {
@@ -103,7 +106,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 70,
+      "latency_ms": 23
     },
     {
       "qid": "A-002",
@@ -121,7 +127,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 59,
+      "latency_ms": 0
     },
     {
       "qid": "A-003",
@@ -139,7 +148,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 154,
+      "latency_ms": 29
     },
     {
       "qid": "A-004",
@@ -157,7 +169,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 77,
+      "latency_ms": 25
     },
     {
       "qid": "A-005",
@@ -175,7 +190,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 93,
+      "latency_ms": 23
     },
     {
       "qid": "A-006",
@@ -193,7 +211,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 99,
+      "latency_ms": 79
     },
     {
       "qid": "A-007",
@@ -211,7 +232,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 59,
+      "latency_ms": 0
     },
     {
       "qid": "A-008",
@@ -229,7 +253,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 73,
+      "latency_ms": 0
     },
     {
       "qid": "B-001",
@@ -247,7 +274,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 155,
+      "latency_ms": 25
     },
     {
       "qid": "B-002",
@@ -265,7 +295,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 207,
+      "latency_ms": 70
     },
     {
       "qid": "B-003",
@@ -283,7 +316,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 164,
+      "latency_ms": 32
     },
     {
       "qid": "B-004",
@@ -301,7 +337,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 125,
+      "latency_ms": 1
     },
     {
       "qid": "B-005",
@@ -319,7 +358,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 186,
+      "latency_ms": 33
     },
     {
       "qid": "B-006",
@@ -337,7 +379,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 143,
+      "latency_ms": 34
     },
     {
       "qid": "B-007",
@@ -355,7 +400,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 116,
+      "latency_ms": 49
     },
     {
       "qid": "B-008",
@@ -373,7 +421,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 1,
+      "tokens": 150,
+      "latency_ms": 24
     },
     {
       "qid": "C-001",
@@ -390,7 +441,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "C-002",
@@ -407,7 +461,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "C-003",
@@ -424,7 +481,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "C-004",
@@ -441,7 +501,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "C-005",
@@ -458,7 +521,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "C-006",
@@ -475,7 +541,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "D-001",
@@ -492,7 +561,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "D-002",
@@ -509,7 +581,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "D-003",
@@ -526,7 +601,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "D-004",
@@ -543,7 +621,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "D-005",
@@ -560,7 +641,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "D-006",
@@ -577,7 +661,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "E-001",
@@ -596,7 +683,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "E-002",
@@ -615,7 +705,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "E-003",
@@ -634,7 +727,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "E-004",
@@ -651,7 +747,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "F-001",
@@ -668,7 +767,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "F-002",
@@ -685,7 +787,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "F-003",
@@ -702,7 +807,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "F-004",
@@ -719,7 +827,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "G-001",
@@ -738,7 +849,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "G-002",
@@ -757,7 +871,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "G-003",
@@ -776,7 +893,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "G-004",
@@ -795,7 +915,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "G-005",
@@ -814,7 +937,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "G-006",
@@ -833,7 +959,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "H-001",
@@ -850,7 +979,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "H-002",
@@ -867,7 +999,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "H-003",
@@ -884,7 +1019,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     },
     {
       "qid": "H-004",
@@ -901,7 +1039,10 @@
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
       "matched_memory_ids": [],
-      "notes": []
+      "notes": [],
+      "steps": 0,
+      "tokens": 19,
+      "latency_ms": 0
     }
   ]
 }

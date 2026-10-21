@@ -18,6 +18,7 @@ if ROOT not in sys.path:
 from agent.llm import LLMConfig  # noqa: E402
 from agent.single_shot import SingleShotAgent  # noqa: E402
 from agent.tools import ToolBox  # noqa: E402
+from adapter_util import fill_cost  # noqa: E402
 from verifier import AgentOutput  # noqa: E402
 
 _AGENT: SingleShotAgent | None = None
@@ -47,4 +48,5 @@ class SingleShotAdapter:
         out.tool_outputs = list(r.tool_outputs or [])
         if r.error:
             out.execution_error = r.error
+        fill_cost(out)
         return out

@@ -16,19 +16,19 @@
       }
     },
     {
-      "t": 0.035,
+      "t": 0.051,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.035,
+      "t": 0.051,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.035,
+      "t": 0.051,
       "phase": "answer",
       "name": "done",
       "ok": true

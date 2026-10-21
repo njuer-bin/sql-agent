@@ -15,6 +15,7 @@ from agent.llm import LLMConfig  # noqa: E402
 from agent.memory import DEFAULT_MEMORY_PATH  # noqa: E402
 from agent.memory_agent import MemoryAgent  # noqa: E402
 from agent.tools import ToolBox  # noqa: E402
+from adapter_util import fill_cost  # noqa: E402
 from verifier import AgentOutput  # noqa: E402
 
 _AGENT: MemoryAgent | None = None
@@ -47,4 +48,5 @@ class MemoryAdapter:
         if r.error:
             out.execution_error = r.error
         out.repair_history = list(r.history or [])  # type: ignore[attr-defined]
+        fill_cost(out)
         return out

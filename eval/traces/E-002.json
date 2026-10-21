@@ -20,37 +20,37 @@
       }
     },
     {
-      "t": 0.093,
+      "t": 0.161,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.093,
+      "t": 0.161,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.093,
+      "t": 0.161,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.093,
+      "t": 0.161,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.093,
+      "t": 0.161,
       "phase": "verify",
       "name": "adversarial_verifier",
       "ok": true
     },
     {
-      "t": 0.093,
+      "t": 0.161,
       "phase": "answer",
       "name": "done",
       "ok": true
