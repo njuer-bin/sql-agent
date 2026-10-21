@@ -12,8 +12,10 @@
 
 from __future__ import annotations
 
+import glob
 import json
 import os
+import sqlite3
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -95,6 +97,72 @@ def recheck(out) -> dict:
             "issues": [f"[{i.check}] {i.detail}" for i in v.issues]}
 
 
+def _browse_table(db_path: str) -> None:  # pragma: no cover
+    """侧栏数据浏览：选表 → 预览样例行（只读）。"""
+    if not os.path.exists(db_path):
+        st.sidebar.warning("文件不存在，取数会失败")
+        return
+    try:
+        con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, check_same_thread=False)
+        try:
+            tb = [r[0] for r in con.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
+            ).fetchall()]
+        finally:
+            con.close()
+    except sqlite3.Error as e:
+        st.sidebar.warning(f"无法读取：{e}")
+        return
+    if not tb:
+        st.sidebar.caption("(空库)")
+        return
+    st.session_state.setdefault("_table", tb[0])
+    sel = st.sidebar.selectbox(
+        "浏览数据表", tb,
+        index=tb.index(st.session_state["_table"]) if st.session_state["_table"] in tb else 0,
+        key="_table_sel",
+    )
+    st.session_state["_table"] = sel
+    try:
+        con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, check_same_thread=False)
+        try:
+            (n,) = con.execute(f'SELECT COUNT(*) FROM "{sel}"').fetchone()
+            cols = [d[1] for d in con.execute(f'PRAGMA table_info("{sel}")').fetchall()]
+            rows = con.execute(f'SELECT * FROM "{sel}" LIMIT 20').fetchall()
+        finally:
+            con.close()
+        st.sidebar.caption(f"{sel}：{n} 行")
+        with st.sidebar.expander("样例行（前 20）", expanded=False):
+            st.dataframe([cols] + rows, use_container_width=True)
+    except sqlite3.Error as e:
+        st.sidebar.caption(f"读取 {sel} 失败：{e}")
+
+
+def _list_dbs(root: str) -> list[str]:
+    """仓库内全部候选数据文件（data/ 递归，*.db）。"""
+    return sorted(
+        glob.glob(os.path.join(root, "data", "**", "*.db"), recursive=True)
+    )
+
+
+def _browse_table(db_path: str) -> None:  # pragma: no cover
+    """侧栏数据浏览：选表 → 预览行数/样例（只读）。"""
+    if not os.path.exists(db_path):
+        st.sidebar.warning("文件不存在，取数会失败")
+        return
+    try:
+        con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, check_same_thread=False)
+        try:
+            (n,) = con.execute(
+                "SELECT COUNT(*) FROM sqlite_master WHERE type='table'"
+            ).fetchone()
+            st.sidebar.caption(f"数据表：{n} 张")
+        finally:
+            con.close()
+    except sqlite3.Error as e:
+        st.sidebar.warning(f"无法读取：{e}")
+
+
 def run_streamlit() -> None:  # pragma: no cover
     import streamlit as st  # 仅在安装了 streamlit 的环境执行
 
@@ -102,13 +170,27 @@ def run_streamlit() -> None:  # pragma: no cover
     st.title("经营分析多智能体助手")
     st.caption("Supervisor + 取数/检索/归因专家 + 对抗式验证（offline / LLM 双通道）")
 
-    toolbox = st.session_state.get("_toolbox") or ToolBox()
-    st.session_state["_toolbox"] = toolbox
-    supervisor = st.session_state.get("_supervisor")
-    if supervisor is None:
+    # 侧栏：选择数据文件（agents 的取数全部定向到所选库）
+    dbs = _list_dbs(ROOT)
+    with st.sidebar:
+        st.header("数据源")
+        db_choice = st.selectbox(
+            "数据库文件", dbs if dbs else ["(data/ 下没有 .db 文件)"],
+            format_func=lambda p: os.path.relpath(p, ROOT),
+        )
+        if db_choice.startswith("("):
+            db_choice = ""
+        if db_choice:
+            _browse_table(db_choice)
+
+    toolbox = st.session_state.get("_toolbox")
+    if toolbox is None or (db_choice and toolbox.db_path != db_choice):
+        toolbox = ToolBox(db_path=db_choice or ToolBox().db_path)
+        st.session_state["_toolbox"] = toolbox
         supervisor = Supervisor(toolbox, llm_cfg=LLMConfig(),
                                 memory_path=DEFAULT_MEMORY_PATH)
         st.session_state["_supervisor"] = supervisor
+    supervisor = st.session_state["_supervisor"]
 
     default_q = st.session_state.get("demo_question")
     question = st.text_input("问题", value=default_q or "",
