@@ -1,0 +1,47 @@
+{
+  "qid": "ui-530",
+  "n_events": 5,
+  "events": [
+    {
+      "t": 0.0,
+      "phase": "route",
+      "name": "supervisor→data",
+      "ok": true,
+      "detail": {
+        "dag": [
+          "sql_generate",
+          "repair_loop",
+          "answer_summarize"
+        ]
+      }
+    },
+    {
+      "t": 0.001,
+      "phase": "repair",
+      "name": "attempt#1(unknown)",
+      "ok": true,
+      "error": "SQL 执行失败: SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 13704 and this is thread id 22444."
+    },
+    {
+      "t": 0.001,
+      "phase": "tool",
+      "name": "sql_execute",
+      "ok": false,
+      "error": "{\"repair_attempt\": 1, \"error_type\": \"unknown\", \"error\": \"SQL 执行失败: SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 13704 and this is thread"
+    },
+    {
+      "t": 0.001,
+      "phase": "tool",
+      "name": "sql_execute",
+      "ok": false,
+      "error": "{\"error\": \"无法自动修复 unknown：SQL 执行失败: SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 13704 and this is thread id 22444.\"}"
+    },
+    {
+      "t": 0.001,
+      "phase": "error",
+      "name": "final_error",
+      "ok": false,
+      "error": "无法自动修复 unknown：SQL 执行失败: SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 13704 and this is thread id 22444."
+    }
+  ]
+}

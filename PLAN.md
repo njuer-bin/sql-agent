@@ -16,13 +16,13 @@
 | 通用 agent 平台（类 Dify） | 工程量大、演示抽象、体现不出你的技术 |
 | 纯研究向记忆框架 | 没有论文就不必，且会和 MemGPT/Letta 正面撞车 |
 | 自研前端 | UI 不体现 agent 技术，用 Streamlit |
-| 用 LangGraph 从零写调度器之外的东西 | 编排不是亮点，记忆才是 |
+| 用 LangGraph 从零写调度器之外的东西 | 编排不是亮点，记忆才是（实际实现即自研路由，见 0.2） |
 
 ## 0.2 技术栈
 
 - Python 3.10（主力）
 - SQLite（数仓）+ pandas（校验）
-- LangGraph（编排，不重复造轮子）
+- 自研 Supervisor + 专家流水线（编排即业务逻辑；不走 LangGraph/StateGraph）
 - ChromaDB 或纯关键词（记忆检索，按规模选）
 - Streamlit（demo 界面）
 - pytest（评测框架自检）

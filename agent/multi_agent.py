@@ -407,12 +407,13 @@ class AttributionExpert:
             # 方向校验：答案声称的方向必须与实测一致
             measured[self._METRIC_LABEL.get(metric, metric)] = val_cur - val_prev
 
-        # 对抗式验证（独立审查：只看答案与工具输出）
-        required = ["时间窗口定位", "现象确认取数", "基线对比", "假设检索（情节记忆）",
-                    "假设验证", "结论输出"]
+        # 对抗式验证（独立审查：只看答案与工具输出）。
+        # required 只断言真实执行过的步骤；「假设验证」由 Verifier 自身完成、
+        # 「结论输出」即本结论 —— 写进 required 只会循环自证，一律不断言。
+        required = ["时间窗口定位", "现象确认取数", "基线对比", "假设检索（情节记忆）"]
         verdict = AdversarialVerifier().check(
             out.answer, out.tool_outputs, measured=measured,
-            executed_steps=executed + ["假设验证", "结论输出"],
+            executed_steps=list(executed),
             required_steps=required)
         out.tool_outputs.append(json.dumps(
             {"verifier": {"passed": verdict.passed,
@@ -498,9 +499,23 @@ class AttributionExpert:
                          f"{ep.get('content')}")
             ev += ["假设检索", "假设验证", "排除其他原因"]
         else:
+            # 「没检索到匹配事件」≠「证明没有原因」。
+            # 诚实口径：能确认变动幅度，但候选原因未逐一下钻，无法确定归因。
             if cur_ok and baseline_ok and val_prev:
-                parts.append("假设检索：记忆库中没有与本时间窗口/地区对应的已知事件档案，"
-                             f"本周期 {label} 变动与已知结构性事件无关，未发现可归因的异常。")
+                big = abs(pct) if pct is not None else 0.0
+                if big >= 30.0:
+                    parts.append(
+                        f"证据不足：本周期 {label} 变动 {fmt_num(abs(pct))}% 已确认，"
+                        "但记忆库中没有对应事件档案，渠道/品类/新老客等候选原因也"
+                        "尚未逐一下钻验证——现有数据无法确定归因，不下根因结论。")
+                    ev.append("证据不足（无对应事件档案）")
+                else:
+                    parts.append(
+                        f"假设检索：记忆库中没有与本时间窗口/地区对应的已知事件档案；"
+                        f"本周期 {label} 变动约 {fmt_num(abs(pct))}% 幅度有限，"
+                        "未发现需专门归因的结构性异常（此为「未找到对应事件」而非"
+                        "「证明无原因」）。")
+                    ev.append("证据不足（无对应事件档案）")
             elif not cur_ok:
                 pass
 

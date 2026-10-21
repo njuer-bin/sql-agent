@@ -13,8 +13,8 @@
     "n_data": 25,
     "n_memory": 21,
     "avg_steps": 0.35,
-    "avg_tokens": 54.3,
-    "avg_latency_ms": 9.7,
+    "avg_tokens": 55.5,
+    "avg_latency_ms": 12.7,
     "by_category": {
       "a_basic": {
         "n": 8,
@@ -87,7 +87,7 @@
     "memory_answer_acc": 0.0,
     "memory_retrieval_acc": 0.0,
     "adapter": "single-shot",
-    "elapsed_sec": 0.46
+    "elapsed_sec": 0.6
   },
   "verdicts": [
     {
@@ -109,7 +109,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 70,
-      "latency_ms": 23
+      "latency_ms": 43
     },
     {
       "qid": "A-002",
@@ -150,8 +150,8 @@
       "matched_memory_ids": [],
       "notes": [],
       "steps": 1,
-      "tokens": 154,
-      "latency_ms": 29
+      "tokens": 162,
+      "latency_ms": 41
     },
     {
       "qid": "A-004",
@@ -172,7 +172,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 77,
-      "latency_ms": 25
+      "latency_ms": 47
     },
     {
       "qid": "A-005",
@@ -193,7 +193,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 93,
-      "latency_ms": 23
+      "latency_ms": 46
     },
     {
       "qid": "A-006",
@@ -213,8 +213,8 @@
       "matched_memory_ids": [],
       "notes": [],
       "steps": 1,
-      "tokens": 99,
-      "latency_ms": 79
+      "tokens": 101,
+      "latency_ms": 113
     },
     {
       "qid": "A-007",
@@ -276,8 +276,8 @@
       "matched_memory_ids": [],
       "notes": [],
       "steps": 1,
-      "tokens": 155,
-      "latency_ms": 25
+      "tokens": 156,
+      "latency_ms": 35
     },
     {
       "qid": "B-002",
@@ -297,8 +297,8 @@
       "matched_memory_ids": [],
       "notes": [],
       "steps": 1,
-      "tokens": 207,
-      "latency_ms": 70
+      "tokens": 215,
+      "latency_ms": 86
     },
     {
       "qid": "B-003",
@@ -318,8 +318,8 @@
       "matched_memory_ids": [],
       "notes": [],
       "steps": 1,
-      "tokens": 164,
-      "latency_ms": 32
+      "tokens": 173,
+      "latency_ms": 50
     },
     {
       "qid": "B-004",
@@ -339,7 +339,7 @@
       "matched_memory_ids": [],
       "notes": [],
       "steps": 1,
-      "tokens": 125,
+      "tokens": 129,
       "latency_ms": 1
     },
     {
@@ -360,8 +360,8 @@
       "matched_memory_ids": [],
       "notes": [],
       "steps": 1,
-      "tokens": 186,
-      "latency_ms": 33
+      "tokens": 188,
+      "latency_ms": 29
     },
     {
       "qid": "B-006",
@@ -381,8 +381,8 @@
       "matched_memory_ids": [],
       "notes": [],
       "steps": 1,
-      "tokens": 143,
-      "latency_ms": 34
+      "tokens": 152,
+      "latency_ms": 25
     },
     {
       "qid": "B-007",
@@ -402,8 +402,8 @@
       "matched_memory_ids": [],
       "notes": [],
       "steps": 1,
-      "tokens": 116,
-      "latency_ms": 49
+      "tokens": 122,
+      "latency_ms": 39
     },
     {
       "qid": "B-008",
@@ -423,8 +423,8 @@
       "matched_memory_ids": [],
       "notes": [],
       "steps": 1,
-      "tokens": 150,
-      "latency_ms": 24
+      "tokens": 154,
+      "latency_ms": 29
     },
     {
       "qid": "C-001",

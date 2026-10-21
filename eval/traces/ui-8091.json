@@ -1,0 +1,31 @@
+{
+  "qid": "ui-8091",
+  "n_events": 3,
+  "events": [
+    {
+      "t": 0.0,
+      "phase": "route",
+      "name": "supervisor→data",
+      "ok": true,
+      "detail": {
+        "dag": [
+          "sql_generate",
+          "repair_loop",
+          "answer_summarize"
+        ]
+      }
+    },
+    {
+      "t": 0.226,
+      "phase": "tool",
+      "name": "tool_output",
+      "ok": true
+    },
+    {
+      "t": 0.226,
+      "phase": "answer",
+      "name": "done",
+      "ok": true
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "qid": "ui-3729",
+  "n_events": 5,
+  "events": [
+    {
+      "t": 0.0,
+      "phase": "route",
+      "name": "supervisor→attribution",
+      "ok": true,
+      "detail": {
+        "dag": [
+          "time_window",
+          "sql_execute_current",
+          "sql_execute_baseline",
+          "memory_hypothesis",
+          "drilldown",
+          "verify_adversarial",
+          "answer_compose"
+        ]
+      }
+    },
+    {
+      "t": 0.001,
+      "phase": "tool",
+      "name": "tool_output",
+      "ok": true
+    },
+    {
+      "t": 0.001,
+      "phase": "retrieve",
+      "name": "memory_research",
+      "ok": true
+    },
+    {
+      "t": 0.001,
+      "phase": "verify",
+      "name": "adversarial_verifier",
+      "ok": false,
+      "error": "blocked"
+    },
+    {
+      "t": 0.001,
+      "phase": "answer",
+      "name": "done",
+      "ok": true
+    }
+  ]
+}

@@ -33,7 +33,66 @@ class MemoryStore:
         if os.path.exists(path):
             for line in open(path, encoding="utf-8"):
                 if line.strip():
-                    self.entries.append(json.loads(line))
+                    self.entries.append(self._normalize(json.loads(line)))
+
+    @staticmethod
+    def _normalize(e: dict) -> dict:
+        """记忆治理字段补齐（缺省不改变已有行为）：
+
+        - provenance: 信息来源（人/系统/事件），默认 "seed"
+        - confidence: 可信度 0~1，默认 0.5
+        - valid_from / valid_to: 生效区间（左闭右闭），缺省即全期
+        - supersedes: 被本条取代的旧条 memory_id
+        - deprecated: True = 已失效（如旧口径 v1），不再进入生效集
+        """
+        e.setdefault("provenance", "seed")
+        e.setdefault("confidence", 0.5)
+        e.setdefault("valid_from", "0000-01-01")
+        e.setdefault("valid_to", None)
+        e.setdefault("supersedes", None)
+        e.setdefault("deprecated", False)
+        return e
+
+    # ---- 记忆治理（W7 最小可用层） ------------------------------------------
+
+    @staticmethod
+    def _dated(e: dict, as_of: str) -> bool:
+        """条目在 as_of 当日是否可见：生效区间 + 未被有效新条 supersede。"""
+        vf = str(e.get("valid_from") or "0000-01-01")
+        vt = e.get("valid_to")
+        if vf > as_of or (vt is not None and str(vt) < as_of):
+            return False
+        return True
+
+    def effective_entries(self, as_of: str | None = None,
+                          ) -> list[dict]:
+        """as_of 历史时点查询：返回该日期实际生效的记忆集合。
+
+        规则：
+        1) 生效区间可见（valid_from ≤ as_of ≤ valid_to，缺省无界）
+        2) supersede 链：若某条旧条被「在 as_of 仍生效」的新条引用，
+           旧条让位（新信息覆盖旧信息）
+        3) as_of 视图（as_of() 产出的对象）冻结自己的时点，
+           再次调用 effective_entries() 不会漂移到「当前」
+        """
+        if as_of is not None:
+            ref = as_of
+        else:
+            ref = getattr(self, "_as_of", None)
+        if ref is None:
+            ref = "9999-12-31"  # 原生库 = 当前时点
+        visible = [e for e in self.entries if self._dated(e, ref)]
+        superseded = {e.get("supersedes") for e in visible
+                      if e.get("supersedes")}
+        return [e for e in visible if e.get("memory_id") not in superseded]
+
+    def as_of(self, date_str: str) -> "MemoryStore":
+        """历史时点视图（复用 view 的浅拷贝约定），冻结时点。"""
+        v = MemoryStore.__new__(MemoryStore)
+        v.path = self.path
+        v.entries = list(self.effective_entries(date_str))
+        v._as_of = date_str
+        return v
 
     def retrieve(self, query: str, top_k: int = 6) -> list[dict]:
         """关键词 + bigram 混合检索，返回按相关度排序的 top_k 条。"""
