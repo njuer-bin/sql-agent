@@ -15,6 +15,7 @@ from typing import Any
 
 from agent.answer import fmt_num, summarize as _summarize_result
 from agent.errors import GuardrailError, SqlToolError
+from agent.error_repair import RepairLoop
 from agent.llm import LLMConfig, chat, extract_json
 from agent.nl2sql_offline import build_offline_sql
 from agent.tools import ToolBox
@@ -45,10 +46,13 @@ class SingleShotResult:
     steps: int = 0
     tool_outputs: list[str] = None  # type: ignore[assignment]
     error: str | None = None
+    history: list[dict] | None = None  # W2 纠错轨迹（single-shot 恒为 None）
 
     def __post_init__(self) -> None:
         if self.tool_outputs is None:
             self.tool_outputs = []
+        if self.history is None:
+            self.history = []
 
 
 class SingleShotAgent:
@@ -118,7 +122,7 @@ class SingleShotAgent:
                             "role": "user",
                             "content": _LLM_SQL_PROMPT.format(
                                 metrics=json.dumps(self.tools.metric_lookup(text, top_k=5),
-                                                  ensure_ascii=False, default=str),
+                                                   ensure_ascii=False, default=str),
                                 schema=self.tools.schema_lookup()[:4000],
                                 question=text,
                             ),
@@ -133,3 +137,82 @@ class SingleShotAgent:
             except RuntimeError:
                 return None  # LLM 挂了 → 落回离线通道
         return build_offline_sql(text)
+
+
+# ==========================================================================
+# W2：error-fix —— 在 single-shot 之上加「错误分类 → 修复 → 重试」循环
+# ==========================================================================
+
+_ATTR_SCAFFOLD_NOTE = (
+    "说明：归因需要「口径确认 → 下钻 → 证据链」多步推理，属后续版本的归因能力；"
+    "当前的取数纠错版本不下因果结论，也不会瞎猜原因。"
+)
+
+
+class ErrorFixAgent(SingleShotAgent):
+    """W2 被测 agent：SQL 报错不再直接失败，走纠错循环（最多 3 次修复重试）。
+
+    与 single-shot 的差异（即 W2 消融变量）：
+      1. SQL 报错 → 分类（语法/列/表/超时/空）→ 确定性修复 → 重试，上限 3 次
+      2. 护栏错误是安全红线，不自动修复
+      3. 归因题先跑「基线取数」并明确说明局限（完整归因链在 W4）
+    """
+
+    name = "error-fix"
+
+    def __init__(self, toolbox: ToolBox, llm_cfg: LLMConfig | None = None,
+                 max_repairs: int = 3) -> None:
+        super().__init__(toolbox, llm_cfg)
+        self.name = ErrorFixAgent.name
+        self.max_repairs = max_repairs
+
+    def answer(self, question: dict) -> SingleShotResult:
+        out = SingleShotResult()
+        qtype = question.get("question_type", "data")
+        text = str(question.get("question", ""))
+
+        # 记忆类是 W3 的能力，明确不答（与 W1 同一边界）
+        if qtype == "memory":
+            out.answer = "该问题需要口径记忆/情节记忆能力，当前的取数纠错版本不支持，不会瞎猜。"
+            out.error = "unsupported_question_type"
+            out.tool_outputs.append('{"note": "no_tool_call_never_executed_sql"}')
+            return out
+
+        sql = self._generate_sql(text, question)
+        if sql is None:
+            out.answer = (
+                "该问题需要归因/下钻能力或更明确的口径，当前版本无法起步取数，不会瞎猜。"
+                if qtype == "attribution"
+                else "我不确定如何取这个数（缺时间或口径信息），不会瞎猜。"
+            )
+            out.error = "sql_generation_failed"
+            out.steps = 1
+            # 留痕：确实没调用工具，避免评分器把诚实拒答误判为幻觉
+            out.tool_outputs.append('{"note": "no_tool_call_never_executed_sql"}')
+            return out
+
+        loop = RepairLoop(self.tools, max_repairs=self.max_repairs)
+        oc = loop.run(sql)
+        out.sql = oc.final_sql
+        out.steps = oc.steps
+        out.history = list(oc.history)
+
+        # 中间失败的尝试也要留痕（可追溯，防幻觉误判）
+        for h in oc.history:
+            if h.get("error_msg"):
+                out.tool_outputs.append(json.dumps(
+                    {"repair_attempt": h["attempt"], "error_type": h["error_type"],
+                     "error": h["error_msg"]}, ensure_ascii=False))
+
+        if not oc.ok:
+            out.answer = f"取数失败：{oc.error}"
+            out.error = oc.error
+            out.tool_outputs.append(json.dumps({"error": oc.error}, ensure_ascii=False))
+            return out
+
+        out.columns = oc.result["columns"]
+        out.rows = oc.result["rows"]
+        out.tool_outputs.append(json.dumps(oc.result, ensure_ascii=False, default=str))
+        body = _summarize_result(text, out.columns, out.rows, oc.result["truncated"])
+        out.answer = _ATTR_SCAFFOLD_NOTE + body if qtype == "attribution" else body
+        return out

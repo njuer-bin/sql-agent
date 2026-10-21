@@ -334,8 +334,12 @@ try:  # noqa: SIM105  没装 agent 依赖时其余三组仍可正常评测
     from single_shot_adapter import SingleShotAdapter  # type: ignore
 
     ADAPTERS["single-shot"] = SingleShotAdapter
+    from error_fix_adapter import ErrorFixAdapter  # type: ignore
+
+    ADAPTERS["error-fix"] = ErrorFixAdapter
 except ImportError:
     ADAPTERS.pop("single-shot", None)
+    ADAPTERS.pop("error-fix", None)
 
 
 def get_adapter(name: str) -> AgentAdapter:

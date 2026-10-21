@@ -102,6 +102,8 @@ class ToolBox:
                     f"SQL 执行超时（>{self.timeout_sec:.0f}s），已中断: "
                     f"{_preview(statement)}" ) from e
             raise SqlToolError(f"SQL 执行失败: {msg}") from e
+        except sqlite3.Error as e:  # ProgrammingError / DatabaseError 等
+            raise SqlToolError(f"SQL 执行失败: {e}") from e
         except sqlite3.Warning as e:
             raise SqlToolError(f"SQL 执行警告: {e}") from e
 
