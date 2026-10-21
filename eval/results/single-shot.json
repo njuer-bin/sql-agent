@@ -1,0 +1,907 @@
+{
+  "adapter": "single-shot",
+  "aggregate": {
+    "n": 46,
+    "final": 0.3493,
+    "hallucination_rate": 0.0,
+    "execution_acc": 0.64,
+    "schema_acc": 1.0,
+    "result_acc": 0.6,
+    "answer_acc": 0.3609,
+    "retrieval_acc": 0.0,
+    "evidence_acc": 0.1111,
+    "n_data": 25,
+    "n_memory": 21,
+    "by_category": {
+      "a_basic": {
+        "n": 8,
+        "final": 0.9563,
+        "hallucination_rate": 0.0,
+        "answer_acc": 1.0,
+        "result_acc": 0.875,
+        "retrieval_acc": 0.0
+      },
+      "b_join": {
+        "n": 8,
+        "final": 1.0,
+        "hallucination_rate": 0.0,
+        "answer_acc": 1.0,
+        "result_acc": 1.0,
+        "retrieval_acc": 0.0
+      },
+      "c_metric": {
+        "n": 6,
+        "final": 0.0,
+        "hallucination_rate": 0.0,
+        "answer_acc": 0.0,
+        "result_acc": 0.0,
+        "retrieval_acc": 0.0
+      },
+      "d_episode": {
+        "n": 6,
+        "final": 0.0,
+        "hallucination_rate": 0.0,
+        "answer_acc": 0.0,
+        "result_acc": 0.0,
+        "retrieval_acc": 0.0
+      },
+      "e_procedure": {
+        "n": 4,
+        "final": 0.105,
+        "hallucination_rate": 0.0,
+        "answer_acc": 0.15,
+        "result_acc": 0.0,
+        "retrieval_acc": 0.0
+      },
+      "f_conflict": {
+        "n": 4,
+        "final": 0.0,
+        "hallucination_rate": 0.0,
+        "answer_acc": 0.0,
+        "result_acc": 0.0,
+        "retrieval_acc": 0.0
+      },
+      "g_attribution": {
+        "n": 6,
+        "final": 0.0,
+        "hallucination_rate": 0.0,
+        "answer_acc": 0.0,
+        "result_acc": 0.0,
+        "retrieval_acc": 0.0
+      },
+      "h_long_horizon": {
+        "n": 4,
+        "final": 0.0,
+        "hallucination_rate": 0.0,
+        "answer_acc": 0.0,
+        "result_acc": 0.0,
+        "retrieval_acc": 0.0
+      }
+    },
+    "attribution_hallucination_rate": 0.0,
+    "attribution_answer_acc": 0.0667,
+    "attribution_result_acc": 0.0,
+    "memory_answer_acc": 0.0,
+    "memory_retrieval_acc": 0.0,
+    "adapter": "single-shot",
+    "elapsed_sec": 0.69
+  },
+  "verdicts": [
+    {
+      "qid": "A-001",
+      "category": "a_basic",
+      "question_type": "data",
+      "difficulty": "easy",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "A-002",
+      "category": "a_basic",
+      "question_type": "data",
+      "difficulty": "easy",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 0.0,
+        "answer": 1.0
+      },
+      "final": 0.65,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "A-003",
+      "category": "a_basic",
+      "question_type": "data",
+      "difficulty": "easy",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "A-004",
+      "category": "a_basic",
+      "question_type": "data",
+      "difficulty": "easy",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "A-005",
+      "category": "a_basic",
+      "question_type": "data",
+      "difficulty": "easy",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "A-006",
+      "category": "a_basic",
+      "question_type": "data",
+      "difficulty": "medium",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "A-007",
+      "category": "a_basic",
+      "question_type": "data",
+      "difficulty": "easy",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "A-008",
+      "category": "a_basic",
+      "question_type": "data",
+      "difficulty": "easy",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "B-001",
+      "category": "b_join",
+      "question_type": "data",
+      "difficulty": "easy",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "B-002",
+      "category": "b_join",
+      "question_type": "data",
+      "difficulty": "medium",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "B-003",
+      "category": "b_join",
+      "question_type": "data",
+      "difficulty": "easy",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "B-004",
+      "category": "b_join",
+      "question_type": "data",
+      "difficulty": "medium",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "B-005",
+      "category": "b_join",
+      "question_type": "data",
+      "difficulty": "hard",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "B-006",
+      "category": "b_join",
+      "question_type": "data",
+      "difficulty": "medium",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "B-007",
+      "category": "b_join",
+      "question_type": "data",
+      "difficulty": "easy",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "B-008",
+      "category": "b_join",
+      "question_type": "data",
+      "difficulty": "medium",
+      "scores": {
+        "execution": 1.0,
+        "schema": 1.0,
+        "result": 1.0,
+        "answer": 1.0
+      },
+      "final": 1.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "C-001",
+      "category": "c_metric",
+      "question_type": "memory",
+      "difficulty": "medium",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "C-002",
+      "category": "c_metric",
+      "question_type": "memory",
+      "difficulty": "easy",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "C-003",
+      "category": "c_metric",
+      "question_type": "memory",
+      "difficulty": "easy",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "C-004",
+      "category": "c_metric",
+      "question_type": "memory",
+      "difficulty": "easy",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "C-005",
+      "category": "c_metric",
+      "question_type": "memory",
+      "difficulty": "easy",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "C-006",
+      "category": "c_metric",
+      "question_type": "memory",
+      "difficulty": "hard",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "D-001",
+      "category": "d_episode",
+      "question_type": "memory",
+      "difficulty": "medium",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "D-002",
+      "category": "d_episode",
+      "question_type": "memory",
+      "difficulty": "medium",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "D-003",
+      "category": "d_episode",
+      "question_type": "memory",
+      "difficulty": "medium",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "D-004",
+      "category": "d_episode",
+      "question_type": "memory",
+      "difficulty": "hard",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "D-005",
+      "category": "d_episode",
+      "question_type": "memory",
+      "difficulty": "easy",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "D-006",
+      "category": "d_episode",
+      "question_type": "memory",
+      "difficulty": "easy",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "E-001",
+      "category": "e_procedure",
+      "question_type": "attribution",
+      "difficulty": "hard",
+      "scores": {
+        "execution": 0.0,
+        "schema": 1.0,
+        "result": 0.0,
+        "answer": 0.0,
+        "evidence": 0.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "E-002",
+      "category": "e_procedure",
+      "question_type": "attribution",
+      "difficulty": "hard",
+      "scores": {
+        "execution": 0.0,
+        "schema": 1.0,
+        "result": 0.0,
+        "answer": 0.0,
+        "evidence": 0.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "E-003",
+      "category": "e_procedure",
+      "question_type": "attribution",
+      "difficulty": "medium",
+      "scores": {
+        "execution": 0.0,
+        "schema": 1.0,
+        "result": 0.0,
+        "answer": 0.6,
+        "evidence": 1.0
+      },
+      "final": 0.42,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "E-004",
+      "category": "e_procedure",
+      "question_type": "memory",
+      "difficulty": "hard",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "F-001",
+      "category": "f_conflict",
+      "question_type": "memory",
+      "difficulty": "hard",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "F-002",
+      "category": "f_conflict",
+      "question_type": "memory",
+      "difficulty": "medium",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "F-003",
+      "category": "f_conflict",
+      "question_type": "memory",
+      "difficulty": "medium",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "F-004",
+      "category": "f_conflict",
+      "question_type": "memory",
+      "difficulty": "hard",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "G-001",
+      "category": "g_attribution",
+      "question_type": "attribution",
+      "difficulty": "hard",
+      "scores": {
+        "execution": 0.0,
+        "schema": 1.0,
+        "result": 0.0,
+        "answer": 0.0,
+        "evidence": 0.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "G-002",
+      "category": "g_attribution",
+      "question_type": "attribution",
+      "difficulty": "hard",
+      "scores": {
+        "execution": 0.0,
+        "schema": 1.0,
+        "result": 0.0,
+        "answer": 0.0,
+        "evidence": 0.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "G-003",
+      "category": "g_attribution",
+      "question_type": "attribution",
+      "difficulty": "hard",
+      "scores": {
+        "execution": 0.0,
+        "schema": 1.0,
+        "result": 0.0,
+        "answer": 0.0,
+        "evidence": 0.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "G-004",
+      "category": "g_attribution",
+      "question_type": "attribution",
+      "difficulty": "medium",
+      "scores": {
+        "execution": 0.0,
+        "schema": 1.0,
+        "result": 0.0,
+        "answer": 0.0,
+        "evidence": 0.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "G-005",
+      "category": "g_attribution",
+      "question_type": "attribution",
+      "difficulty": "hard",
+      "scores": {
+        "execution": 0.0,
+        "schema": 1.0,
+        "result": 0.0,
+        "answer": 0.0,
+        "evidence": 0.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "G-006",
+      "category": "g_attribution",
+      "question_type": "attribution",
+      "difficulty": "medium",
+      "scores": {
+        "execution": 0.0,
+        "schema": 1.0,
+        "result": 0.0,
+        "answer": 0.0,
+        "evidence": 0.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "H-001",
+      "category": "h_long_horizon",
+      "question_type": "memory",
+      "difficulty": "hard",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "H-002",
+      "category": "h_long_horizon",
+      "question_type": "memory",
+      "difficulty": "medium",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "H-003",
+      "category": "h_long_horizon",
+      "question_type": "memory",
+      "difficulty": "medium",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    },
+    {
+      "qid": "H-004",
+      "category": "h_long_horizon",
+      "question_type": "memory",
+      "difficulty": "medium",
+      "scores": {
+        "retrieval": 0.0,
+        "answer": 0.0,
+        "execution": 1.0
+      },
+      "final": 0.0,
+      "hallucination": false,
+      "hallucinated_numbers": [],
+      "memory_hit": 0.0,
+      "matched_memory_ids": [],
+      "notes": []
+    }
+  ]
+}

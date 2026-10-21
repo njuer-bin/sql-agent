@@ -1,0 +1,295 @@
+# ============================================================================
+# 指标字典（Metric Dictionary）
+# ============================================================================
+# 这是「语义记忆」的核心数据源，也是 RAG 检索的对象。
+#
+# 设计要点：
+#   1. aliases     —— 业务同义词。用户说"成交额"必须能命中 gmv_gross
+#   2. ambiguities —— 故意保留的口径歧义。这是 RAG 存在的理由：
+#                     同一个词在不同团队有不同算法，agent 必须查而不是猜
+#   3. revisions   —— 口径变更记录。新事实与旧记忆冲突时按版本链消解
+#
+# 维护约定：confirmed_by 为空 = 未确认（置信度低，检索时降权）
+# ============================================================================
+
+version: "1.2"
+owner: "数据平台组"
+updated_at: "2026-09-02"
+
+metrics:
+
+  # ---------------------------------------------------------------- GMV ---
+  - metric_id: gmv_gross
+    name: GMV（毛）
+    aliases: [成交额, 交易额, 销售总额, 下单金额, GMV, 大盘]
+    category: 交易
+    unit: 元
+    canonical_definition: >
+      统计周期内所有 order_status='paid' 订单的 pay_amount 之和。
+      【不含】已取消订单（order_status='cancelled'）；
+      【含】已支付后发生退款的订单（即不扣减 refund_amount）。
+    formula: "SELECT SUM(pay_amount) FROM fact_order WHERE order_status='paid' AND {time_filter}"
+    tables: [fact_order]
+    granularity: [day, week, month, quarter, year]
+    owner: 数据平台组
+    confirmed_by: user_zhang
+    confirmed_at: "2025-11-20"
+    confidence: high
+    ambiguities:
+      - "是否含已取消订单 —— 口径明确不含，但 2026-06 存在 cancelled 订单 pay_amount 未清零的数据质量问题，不过滤会高估约 3%"
+      - "是否含退款 —— 毛 GMV 不扣减，净 GMV 才扣"
+    known_issues:
+      - effect_id: E4
+        window: "2026-06-01 ~ 2026-06-30"
+        note: "支付回调重试缺陷，6 月所有已取消订单的 pay_amount 未被清零"
+
+  - metric_id: gmv_net
+    name: GMV（净）
+    aliases: [净成交额, 净GMV, 实际成交额, 扣退成交额]
+    category: 交易
+    unit: 元
+    canonical_definition: >
+      统计周期内所有 order_status='paid' 订单的 (pay_amount - refund_amount) 之和。
+      已取消订单不计入。
+    formula: "SELECT SUM(pay_amount - refund_amount) FROM fact_order WHERE order_status='paid' AND {time_filter}"
+    tables: [fact_order]
+    granularity: [day, week, month, quarter, year]
+    owner: 数据平台组
+    confirmed_by: user_zhang
+    confirmed_at: "2025-11-20"
+    confidence: high
+    ambiguities:
+      - "部分退款按实际退款额扣减，全额退款则该订单贡献为 0（但仍计入订单数）"
+
+  # ------------------------------------------------------------ 订单/用户 ---
+  - metric_id: order_count
+    name: 订单数
+    aliases: [单量, 订单量, 成交量, 下单数]
+    category: 交易
+    unit: 单
+    canonical_definition: "统计周期内 order_status='paid' 的订单数（COUNT(*)）。"
+    formula: "SELECT COUNT(*) FROM fact_order WHERE order_status='paid' AND {time_filter}"
+    tables: [fact_order]
+    granularity: [day, week, month]
+    owner: 数据平台组
+    confirmed_by: user_zhang
+    confirmed_at: "2025-11-20"
+    confidence: high
+    ambiguities:
+      - "退款订单仍计入订单数（是『有支付行为的订单』，不是『最终成交的订单』）"
+
+  - metric_id: buyer_count
+    name: 下单用户数
+    aliases: [购买用户数, 成交用户数, 买家数, 下单人数]
+    category: 用户
+    unit: 人
+    canonical_definition: "统计周期内下过 order_status='paid' 订单的去重用户数。"
+    formula: "SELECT COUNT(DISTINCT customer_id) FROM fact_order WHERE order_status='paid' AND {time_filter}"
+    tables: [fact_order]
+    granularity: [day, week, month]
+    owner: 用户增长组
+    confirmed_by: user_li
+    confirmed_at: "2026-01-15"
+    confidence: high
+    ambiguities: []
+
+  - metric_id: new_buyer_count
+    name: 新客数
+    aliases: [新客, 新增购买用户, 新客数, 首购用户数]
+    category: 用户
+    unit: 人
+    canonical_definition: >
+      统计周期内**首次下单日期落在该周期内**的去重用户数。
+      判定依据是 dim_customer.first_order_date（首次成功支付订单的日期），
+      不是 register_date（注册日期）。
+    formula: >
+      SELECT COUNT(DISTINCT c.customer_id)
+      FROM dim_customer c
+      WHERE c.first_order_date BETWEEN {start} AND {end}
+    tables: [dim_customer]
+    granularity: [day, week, month]
+    owner: 用户增长组
+    confirmed_by: user_li
+    confirmed_at: "2026-01-15"
+    confidence: high
+    ambiguities:
+      - "新客按『首次下单』还是『首次注册』算 —— 口径明确按首次下单"
+      - "新客是否要求首单未退款 —— 口径不要求，退款的新客仍算新客"
+
+  - metric_id: aov
+    name: 客单价
+    aliases: [客单价, 单均价, 平均每单金额, AOV, 笔单价]
+    category: 交易
+    unit: 元/单
+    canonical_definition: >
+      统计周期内 GMV（毛） / 订单数。
+      【分母是订单数，不是用户数】—— 这是最常见的分歧点。
+    formula: "SELECT SUM(pay_amount) / COUNT(*) FROM fact_order WHERE order_status='paid' AND {time_filter}"
+    tables: [fact_order]
+    granularity: [day, week, month]
+    owner: 数据平台组
+    confirmed_by: user_zhang
+    confirmed_at: "2025-11-20"
+    confidence: high
+    ambiguities:
+      - "分母用订单数还是下单用户数 —— 口径明确用订单数；但业务方口头常说的『客单价』有时指人均消费（GMV/用户数），两者在本数据集上相差约 1.8 倍"
+      - "分子用毛 GMV 还是净 GMV —— 口径明确用毛 GMV"
+
+  # -------------------------------------------------------------- 复购率 ---
+  # 这个指标带版本链 —— 是评测集 F 类（冲突消解）题目的核心
+  - metric_id: repurchase_rate
+    name: 复购率
+    aliases: [复购率, 重复购买率, 二次购买率, 复购]
+    category: 用户
+    unit: "%"
+    canonical_definition: >
+      统计周期内下单次数 >= 2 的去重用户数 / 统计周期内下单去重用户数。
+      基于 order_status='paid' 订单，按自然月统计。
+      【当前生效版本 v2】：分子分母均剔除在统计周期内发生过退款的用户。
+    formula: >
+      WITH per_user AS (
+        SELECT customer_id, COUNT(*) AS n,
+               SUM(refund_amount) AS ref
+        FROM fact_order
+        WHERE order_status='paid' AND {time_filter}
+        GROUP BY customer_id
+      )
+      SELECT 100.0 * COUNT(CASE WHEN n >= 2 THEN 1 END) / COUNT(*)
+      FROM per_user
+      WHERE ref = 0            -- v2：剔除有退款的用户
+    tables: [fact_order]
+    granularity: [month, quarter]
+    owner: 用户增长组
+    confirmed_by: user_li
+    confirmed_at: "2026-08-28"
+    confidence: high
+    ambiguities:
+      - "窗口按自然月还是滚动 30 天 —— 口径明确按自然月"
+      - "两次下单是否需要最小间隔 —— 口径不要求，同一天下两单也算复购"
+      - "是否剔除退款用户 —— **2026-09 起变更**，见 revisions"
+    revisions:
+      - version: v1
+        effective_from: "2026-01-01"
+        effective_to: "2026-08-31"
+        definition: "分子分母均【不剔除】退款用户（发生过退款的用户仍计入）。"
+        confirmed_by: user_li
+        confirmed_at: "2026-01-10"
+        status: superseded
+      - version: v2
+        effective_from: "2026-09-01"
+        effective_to: null
+        definition: "分子分母均【剔除】在统计周期内发生过退款的用户（只统计净下单用户）。"
+        confirmed_by: user_li
+        confirmed_at: "2026-08-28"
+        change_reason: "业务方反馈退款用户会虚增复购率，导致与财务口径对不上"
+        status: active
+
+  # -------------------------------------------------------------- 退款/服务 ---
+  - metric_id: refund_rate
+    name: 退款率
+    aliases: [退款率, 退货率, 退款比例]
+    category: 服务
+    unit: "%"
+    canonical_definition: >
+      统计周期内 SUM(refund_amount) / SUM(pay_amount)，
+      仅统计 order_status='paid' 的订单。
+    formula: "SELECT 100.0 * SUM(refund_amount) / SUM(pay_amount) FROM fact_order WHERE order_status='paid' AND {time_filter}"
+    tables: [fact_order]
+    granularity: [day, week, month]
+    owner: 服务体验组
+    confirmed_by: user_wang
+    confirmed_at: "2026-02-01"
+    confidence: high
+    ambiguities:
+      - "按金额算还是按单量算 —— 口径明确按金额；按单量算（有退款的订单数/总订单数）会明显更高"
+
+  - metric_id: ticket_count
+    name: 客服工单量
+    aliases: [工单量, 客服工单, 客诉量, 进线量]
+    category: 服务
+    unit: 单
+    canonical_definition: "统计周期内创建的客服工单数（fact_service_ticket）。"
+    formula: "SELECT COUNT(*) FROM fact_service_ticket WHERE created_date BETWEEN {start} AND {end}"
+    tables: [fact_service_ticket]
+    granularity: [day, week, month]
+    owner: 服务体验组
+    confirmed_by: user_wang
+    confirmed_at: "2026-02-01"
+    confidence: high
+    ambiguities: []
+
+  - metric_id: avg_resolve_hours
+    name: 平均解决时长
+    aliases: [平均处理时长, 平均解决时长, 工单时效]
+    category: 服务
+    unit: 小时
+    canonical_definition: "已解决工单（is_resolved=1）的 resolve_hours 平均值。"
+    formula: "SELECT AVG(resolve_hours) FROM fact_service_ticket WHERE is_resolved=1 AND created_date BETWEEN {start} AND {end}"
+    tables: [fact_service_ticket]
+    granularity: [week, month]
+    owner: 服务体验组
+    confirmed_by: user_wang
+    confirmed_at: "2026-02-01"
+    confidence: medium
+    ambiguities:
+      - "是否含未解决工单 —— 口径明确只算已解决的"
+
+  # ---------------------------------------------------------------- 流量 ---
+  - metric_id: sessions
+    name: 会话数
+    aliases: [会话数, 访问会话, sessions, PV会话]
+    category: 流量
+    unit: 次
+    canonical_definition: "统计周期内各渠道各地区的 sessions 之和（fact_web_traffic）。"
+    formula: "SELECT SUM(sessions) FROM fact_web_traffic WHERE stat_date BETWEEN {start} AND {end}"
+    tables: [fact_web_traffic]
+    granularity: [day, week, month]
+    owner: 流量组
+    confirmed_by: null
+    confirmed_at: null
+    confidence: low          # ← 未确认，检索时应降权并提示
+    ambiguities:
+      - "是否含跳出会话 —— 字典未明确（该指标尚未经业务方确认）"
+
+  - metric_id: conversion_rate
+    name: 转化率
+    aliases: [转化率, 下单转化率, 支付转化率]
+    category: 流量
+    unit: "%"
+    canonical_definition: "统计周期内订单数 / 会话数。"
+    formula: "SELECT 100.0 * {order_count} / {sessions}"
+    tables: [fact_order, fact_web_traffic]
+    granularity: [day, week, month]
+    owner: 流量组
+    confirmed_by: null
+    confirmed_at: null
+    confidence: low
+    ambiguities:
+      - "分子分母的地域/渠道口径必须对齐，否则转化率会失真"
+
+# ============================================================================
+# 维度与口径约束（agent 生成 SQL 时必须遵守）
+# ============================================================================
+dimensions:
+  time:
+    column: fact_order.order_date
+    note: "所有时间过滤必须走 fact_order.order_date；dim_date 仅用于节假日/大促标记"
+  region:
+    join: "JOIN dim_region r ON r.region_id = {fact}.region_id"
+    column: r.region_name
+    values: [华东, 华北, 华南, 华中, 西南, 西北, 东北]
+  channel:
+    join: "JOIN dim_channel c ON c.channel_id = {fact}.channel_id"
+    column: c.channel_name
+    type_column: c.channel_type
+    values:
+      自营: [自营APP, 自营小程序]
+      第三方: [天猫旗舰店, 京东自营, 抖音旗舰店]
+      线下: [线下门店]
+
+sql_guardrails:
+  - "只允许 SELECT 语句；禁止 DROP / DELETE / UPDATE / INSERT / ALTER / CREATE / TRUNCATE"
+  - "所有查询必须带时间过滤，禁止全表扫描"
+  - "金额聚合必须过滤 order_status='paid'"
+  - "结果行数上限 1000，超出需改用聚合"
+  - "单条查询超时 10 秒"
