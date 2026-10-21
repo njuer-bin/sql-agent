@@ -226,6 +226,10 @@ class AttributionExpert:
             if e.get("memory_type") != "episodic":
                 continue
             kws = [str(k) for k in (e.get("keywords") or [])]
+            # 结构性事件是月份绑定的：事件档案月份必须等于提问窗口的月份，
+            # 否则就是跨月错配（问 7 月答 9 月事件 = 编造根因，一律不引用）。
+            if not any(month_tok in k for k in kws):
+                continue
             s = 0.0
             if any(k.lower() == month_tok for k in kws):
                 s += 2.0

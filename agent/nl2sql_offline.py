@@ -70,7 +70,7 @@ def parse_time(q: str) -> tuple[str, str] | None:
 
 def _is_paid_metric(q: str) -> bool:
     """大多数指标默认只算 paid 订单。退款率公分母用 paid，工单/流量无该语义。"""
-    kw = ["gmv", "订单", "客单价", "新客", "复购", "退款率", "成交", "转化率", "aov"]
+    kw = ["gmv", "订单", "客单价", "新客", "复购", "退款", "成交", "转化率", "aov"]
     return any(k in q.lower() for k in kw)
 
 
@@ -84,6 +84,9 @@ def detect_metric(q: str) -> str | None:
         return "repurchase_rate"
     if "退款率" in ql or "退货率" in ql:
         return "refund_rate"
+    if ("退款" in ql or "退货" in ql) and ("率" not in ql or "退款率" not in ql):
+        # 裸「退款/退货」= 退款金额口径（如「哪个月退款最多」）；退款率在上方已拦截
+        return "refund_amount"
     if "客单价" in ql or "单均价" in ql or "arpu" in ql:
         return "aov"
     if "新客" in ql:
@@ -147,14 +150,35 @@ def build_offline_sql(q: str) -> str | None:
     """从 NL 问题拼一条 SQL；识别不了返回 None（不允许瞎编）。"""
     metric = detect_metric(q)
     time_range = parse_time(q)
-    if metric is None or time_range is None:
+    if metric is None:
         return None
-
-    start, end = time_range
+    # 退款金额 / 「哪个月」极值类题允许无时间窗（见下方分支），其余必须有窗口
+    start, end = time_range if time_range else (None, None)
     has_paid = "order_status='paid'" if _is_paid_metric(q) else None
     region = detect_region(q)
     dim = detect_dimension(q)
     limit = detect_limit(q)
+
+    # 裸退款金额：「哪个月退款最多」等跨全库月份极值 —— 无显式时间窗，
+    # 按月聚合取 Top-N；有显式时间窗时回落到通用流水线（下方 agg_base 分支）。
+    if metric == "refund_amount" and time_range is None:
+        if dim == "ym" or re.search(r"哪[个一]月|月份|各[个]?月", q):
+            n = limit if limit else 1
+            join = " JOIN dim_region r ON r.region_id=o.region_id" if region else ""
+            where = "o.order_status='paid'"
+            if region:
+                where += f" AND r.region_name='{region}'"
+            sql = (
+                f"SELECT strftime('%Y-%m', o.order_date) AS ym, "
+                f"ROUND(SUM(o.refund_amount),2) AS refund_amt "
+                f"FROM fact_order o{join} WHERE {where} "
+                f"GROUP BY strftime('%Y-%m', o.order_date) "
+                f"ORDER BY refund_amt DESC LIMIT {n}"
+            )
+            return sql
+        return None   # 裸退款又无月份措辞 → 识别不了，宁可拒答
+    if time_range is None:
+        return None
 
     base_where: list[str] = []
     join_facts = "fact_order"
@@ -225,6 +249,9 @@ def build_offline_sql(q: str) -> str | None:
     elif metric == "order_count":
         agg_alias = "order_cnt"
         agg_base = lambda p: f"COUNT(*)"  # noqa: E731
+    elif metric == "refund_amount":
+        agg_alias = "refund_amt"
+        agg_base = lambda p: f"ROUND(SUM({p}refund_amount),2)"  # noqa: E731
     elif metric == "refund_rate":
         agg_alias = "refund_rate"
         agg_base = lambda p: f"ROUND(100.0*SUM({p}refund_amount)/SUM({p}pay_amount),2)"  # noqa: E731

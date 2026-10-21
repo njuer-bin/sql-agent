@@ -55,12 +55,20 @@ def _head(sql: str, limit: int = 64) -> str:
 
 
 def _time_filter_present(skeleton: str, date_col: str) -> bool:
-    """检测是否有针对日期列的过滤：显式比较运算 / BETWEEN / IN / strftime 月分桶。"""
+    """检测是否有针对日期列的过滤：显式比较运算 / BETWEEN / IN / strftime 月分桶。
+    另放行「按时间列分桶聚合」形态（GROUP BY 里包含对该列的
+    strftime(...) AS 月桶，如「哪个月退款最多」）—— 这是完整的时间
+    维度聚合而非无边界全表扫描。"""
     p1 = r"\b[\w\.]*\b" + date_col + r"\b\s*(BETWEEN|>=|<=|<|>|=|IN\b)"
     if re.search(p1, skeleton, re.IGNORECASE):
         return True
-    p2 = r"\bstrftime\s*\(\s*'%Y-%m'\s*,\s*[\w\.]*\b" + date_col + r"\b\s*\)\s*(BETWEEN|>=|<=|<|>|=|IN\b)"
-    return bool(re.search(p2, skeleton, re.IGNORECASE))
+    p2 = r"\bstrftime\s*\(\s*'[^']*'\s*,\s*[\w\.]*\b" + date_col + r"\b\s*\)\s*(BETWEEN|>=|<=|<|>|=|IN\b)"
+    if re.search(p2, skeleton, re.IGNORECASE):
+        return True
+    # 骨架已把字符串字面量剥成 ''，格式串用 [^']* 匹配
+    p3 = (r"GROUP\s+BY\s+[^;]*strftime\s*\(\s*'[^']*'\s*,\s*[\w\.]*\b"
+          + date_col + r"\b")
+    return bool(re.search(p3, skeleton, re.IGNORECASE))
 
 
 def validate_sql(sql: str) -> str:
