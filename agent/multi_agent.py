@@ -25,6 +25,7 @@ from agent.nl2sql_offline import (build_offline_sql, detect_metric,
                                   detect_region, parse_time)
 from agent.single_shot import ErrorFixAgent, SingleShotResult
 from agent.tools import ToolBox
+from agent.trace import Tracer
 from agent.verifier_adv import AdversarialVerifier
 
 # --------------------------------------------------------------------------------------
@@ -472,8 +473,36 @@ class Supervisor:
         return ["sql_generate", "repair_loop", "answer_summarize"]
 
     def answer(self, question: dict) -> SingleShotResult:
+        qid = str(question.get("qid") or "run")
+        tracer = Tracer(qid)
         expert_name = self.route(question)
+        tracer.log("route", f"supervisor→{expert_name}",
+                   detail={"dag": self.dag(expert_name)})
         out = self.experts[expert_name].answer(question)
+        # 回填证据事件：纠错轨迹 / 检索 / 对抗验证裁定，全部可回放
+        for h in (out.history or []):
+            if isinstance(h, dict) and h.get("attempt") and "error_type" in h:
+                tracer.log("repair", f"attempt#{h['attempt']}({h['error_type']})",
+                           ok=True, error=h.get("error_msg"))
+        for to in (out.tool_outputs or []):
+            if '"verifier"' in to:
+                try:
+                    v = json.loads(to)["verifier"]
+                    tracer.log("verify", "adversarial_verifier", ok=v["passed"],
+                               error=None if v["passed"] else "blocked")
+                except (ValueError, KeyError):
+                    pass
+            elif '"memory"' in to:
+                tracer.log("retrieve", "memory_research", ok=True)
+            elif '"error"' in to or '"execution_error"' in to:
+                tracer.log("tool", "sql_execute", ok=False, error=to[:200])
+            else:
+                tracer.log("tool", "tool_output", ok=True)
+        if out.error:
+            tracer.log("error", "final_error", ok=False, error=out.error)
+        else:
+            tracer.log("answer", "done", ok=True)
+        tracer.save()
         out.history = list(out.history or []) + [
             {"supervisor": {"route": expert_name, "dag": self.dag(expert_name)}}]
         return out
