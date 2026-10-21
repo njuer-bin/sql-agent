@@ -131,6 +131,44 @@ class AttributionExpert:
                    + sql[m.end():])
         return new_sql
 
+    @staticmethod
+    def _prev_month_window(start: str, end: str,
+                           ) -> tuple[str | None, str | None]:
+        """上一周期窗口的日历正确切法。
+
+        整月窗口（X 月 1 号 ~ X 月最后一天） → 上一自然月整体；
+        否则 → 平移窗口长度天（保持跨度一致，不做月份跨越假设）。
+        """
+        s, e = date.fromisoformat(start), date.fromisoformat(end)
+        if s.day == 1 and (e + timedelta(days=1)).day == 1:
+            last_prev_month = s - timedelta(days=1)
+            return (last_prev_month.replace(day=1).isoformat(),
+                    last_prev_month.isoformat())
+        span = (e - s).days + 1
+        return ((s - timedelta(days=span)).isoformat(),
+                (e - timedelta(days=span)).isoformat())
+
+    @classmethod
+    def _redate_window(cls, sql: str, start: str, end: str,
+                       ) -> tuple[str | None, str, str]:
+        """把 SQL 里最后一个 BETWEEN 改写成指定窗口（基线取数的通用改写）。
+
+        返回 (new_sql | None, n0, n1)。
+        """
+        n0, n1 = cls._prev_month_window(start, end)
+        if n0 is None:
+            return None, "", ""
+        pat = re.compile(
+            r"(BETWEEN\s+')\d{4}-\d{2}-\d{2}('\s+AND\s+')\d{4}-\d{2}-\d{2}(')",
+            re.I)
+        matches = list(pat.finditer(sql))
+        if not matches:
+            return None, n0, n1
+        m = matches[-1]
+        new_sql = (sql[:m.start()] + m.group(1) + n0 + m.group(2) + n1
+                   + m.group(3) + sql[m.end():])
+        return new_sql, n0, n1
+
     def _scan_sql(self, region: str | None, start: str, end: str) -> str:
         """异动扫描：区域内逐日 GMV + 退款率（老规矩体检的标准跑法）。"""
         where = "o.order_status='paid'"
@@ -264,8 +302,9 @@ class AttributionExpert:
             out.sql = cur_sql
             out.steps += 1
 
-        # 步骤 2：拉基线（上一周期同口径）
-        baseline_sql = self._shift_period(cur_sql, start, end, 31) if cur_sql else None
+        # 步骤 2：拉基线（上一周期同口径，日历正确切月：整月→上一自然月）
+        baseline_sql, n0, n1 = (self._redate_window(cur_sql, start, end)
+                                if cur_sql else (None, "", ""))
         val_prev = self._run_sql_value(baseline_sql) if baseline_sql else None
         baseline_ok = val_prev is not None
         if cur_ok:
@@ -273,7 +312,8 @@ class AttributionExpert:
             if baseline_ok:
                 out.steps += 1
                 out.tool_outputs.append(json.dumps(
-                    {"baseline": {"current": val_cur, "previous": val_prev}},
+                    {"baseline": {"current": val_cur, "previous": val_prev,
+                                  "baseline_window": [n0, n1]}},
                     ensure_ascii=False))
 
         # 步骤 3+5：下钻与假设 —— 情节记忆匹配 + 程序记忆
@@ -370,6 +410,20 @@ class AttributionExpert:
         label = self._METRIC_LABEL.get(metric, metric or "")
         ev = ["时间窗口定位"]
         parts: list[str] = []
+
+        # 0) 直接回答题目（先给结论，再给证据链）
+        if cur_ok and baseline_ok and val_prev:
+            pct = (val_cur - val_prev) / abs(val_prev) * 100.0
+            trend = "上升" if pct > 0 else ("下降" if pct < 0 else "持平")
+            pp = val_cur - val_prev
+            opener = (f"直接结论：{f'{region} ' if region else ''}{label}"
+                      f"本周期较上一周期{trend}约 {fmt_num(abs(pp))} 个百分点"
+                      f"（{fmt_num(val_cur)}% vs {fmt_num(val_prev)}%）。")
+            if ep and trend == "下降" and pct <= -30.0:
+                opener += (f"主因判断：上一周期基数被一次性事件抬高（见下方【{ep.get('title')}】），"
+                           f"本周期回落到正常水平，属于结构性回落而非需求恶化。") \
+                    if "事故" in str(ep.get("content", "")) else ""
+            parts.append(opener)
 
         # 1) 现象与基线（量化）
         if cur_ok and baseline_ok:

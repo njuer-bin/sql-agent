@@ -59,9 +59,10 @@ def _confidence(agent_output, question: dict) -> float:
 
 def build_report(question: dict, out) -> str:
     """结论 + 证据链 + SQL + 结果表 + 置信度的可审计报告（Markdown）。"""
-    lines = ["# 经营分析回答（可审计）", "", f"**问题**：{question.get('question', '')}", ""]
-    lines.append(f"**结论**：{out.answer}")
-    lines.append("")
+    lines: list[str] = ["# 经营分析回答（可审计）", "",
+                        f"**问题**：{question.get('question', '')}", "",
+                        # Streamlit/MD 会把「01~2026」当上下标语法吞字符，转义后原样展示
+                        "**结论**：" + str(out.answer).replace("~", "\\~"), ""]
     ev = getattr(out, "evidence", None) or []
     if ev:
         lines.append("**证据链步骤**：" + " → ".join(ev))
@@ -99,6 +100,7 @@ def recheck(out) -> dict:
 
 def _browse_table(db_path: str) -> None:  # pragma: no cover
     """侧栏数据浏览：选表 → 预览样例行（只读）。"""
+    import streamlit as st  # 仅在安装了 streamlit 的环境执行
     if not os.path.exists(db_path):
         st.sidebar.warning("文件不存在，取数会失败")
         return
@@ -143,24 +145,6 @@ def _list_dbs(root: str) -> list[str]:
     return sorted(
         glob.glob(os.path.join(root, "data", "**", "*.db"), recursive=True)
     )
-
-
-def _browse_table(db_path: str) -> None:  # pragma: no cover
-    """侧栏数据浏览：选表 → 预览行数/样例（只读）。"""
-    if not os.path.exists(db_path):
-        st.sidebar.warning("文件不存在，取数会失败")
-        return
-    try:
-        con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, check_same_thread=False)
-        try:
-            (n,) = con.execute(
-                "SELECT COUNT(*) FROM sqlite_master WHERE type='table'"
-            ).fetchone()
-            st.sidebar.caption(f"数据表：{n} 张")
-        finally:
-            con.close()
-    except sqlite3.Error as e:
-        st.sidebar.warning(f"无法读取：{e}")
 
 
 def run_streamlit() -> None:  # pragma: no cover
@@ -211,7 +195,8 @@ def run_streamlit() -> None:  # pragma: no cover
             out.steps = out_raw.steps
 
         st.subheader("结论")
-        st.markdown(out.answer)
+        # Streamlit 的 Markdown 把「01~2026」当上/下标语法吞字符，转义后原样展示
+        st.markdown(out.answer.replace("~", "\\~"))
         c1, c2, c3 = st.columns(3)
         c1.metric("置信度", _confidence(out, {"question": question}))
         c2.metric("步数", out.steps)
