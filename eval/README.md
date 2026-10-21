@@ -23,7 +23,7 @@
 |---|---|
 | `build_questions.py` | **题目生成器**：从数据库算 gold 答案，输出 8 个 jsonl |
 | `questions/*.jsonl` | 46 道题（生成产物，不要手改） |
-| `metrics.yaml` | 指标字典：10 个指标的口径、别名、歧义、版本链 |
+| `metrics.yaml` | 指标字典：12 个指标的口径、别名、歧义、版本链 |
 | `memory_fixtures.jsonl` | 19 条记忆种子（语义 9 / 情节 6 / 程序 4） |
 | `verifier.py` | **评分器**：四层分项给分 + 幻觉检测 + 汇总 |
 | `adapters.py` | **适配器层**：被测 agent 与框架之间的唯一边界 |

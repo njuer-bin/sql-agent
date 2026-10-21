@@ -13,7 +13,7 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
-from agent.answer import fmt_num, summarize as _summarize_result
+from agent.answer import summarize as _summarize_result
 from agent.errors import GuardrailError, SqlToolError
 from agent.error_repair import RepairLoop
 from agent.llm import LLMConfig, chat, extract_json
