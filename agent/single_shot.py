@@ -47,12 +47,15 @@ class SingleShotResult:
     tool_outputs: list[str] = None  # type: ignore[assignment]
     error: str | None = None
     history: list[dict] | None = None  # W2 纠错轨迹（single-shot 恒为 None）
+    retrieved: list[str] | None = None  # W3 记忆检索命中的 memory_id
 
     def __post_init__(self) -> None:
         if self.tool_outputs is None:
             self.tool_outputs = []
         if self.history is None:
             self.history = []
+        if self.retrieved is None:
+            self.retrieved = []
 
 
 class SingleShotAgent:
