@@ -84,7 +84,7 @@
     "memory_answer_acc": 0.9147,
     "memory_retrieval_acc": 1.0,
     "adapter": "memory",
-    "elapsed_sec": 1.25
+    "elapsed_sec": 1.37
   },
   "verdicts": [
     {

@@ -64,3 +64,14 @@ class MemoryStore:
              "content": e.get("content")}
             for e in entries
         ]
+
+    def view(self, types: set[str]) -> "MemoryStore":
+        """W4 私有记忆隔离：为专家 agent 生成只含指定 memory_type 的视图。
+
+        例如取数专家只见 semantic（口径），归因专家见 procedural+episodic+semantic，
+        彼此的可见记忆互不污染（防止取数 agent 拿情节记忆里的结论「猜」数据）。
+        """
+        v = MemoryStore.__new__(MemoryStore)
+        v.path = self.path
+        v.entries = [e for e in self.entries if e.get("memory_type") in types]
+        return v

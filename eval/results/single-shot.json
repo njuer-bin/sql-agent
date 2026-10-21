@@ -84,7 +84,7 @@
     "memory_answer_acc": 0.0,
     "memory_retrieval_acc": 0.0,
     "adapter": "single-shot",
-    "elapsed_sec": 0.96
+    "elapsed_sec": 0.5
   },
   "verdicts": [
     {

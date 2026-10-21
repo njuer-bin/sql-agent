@@ -340,10 +340,14 @@ try:  # noqa: SIM105  没装 agent 依赖时其余三组仍可正常评测
     from memory_adapter import MemoryAdapter  # type: ignore
 
     ADAPTERS["memory"] = MemoryAdapter
+    from multi_agent_adapter import MultiAgentAdapter  # type: ignore
+
+    ADAPTERS["multi-agent"] = MultiAgentAdapter
 except ImportError:
     ADAPTERS.pop("single-shot", None)
     ADAPTERS.pop("error-fix", None)
     ADAPTERS.pop("memory", None)
+    ADAPTERS.pop("multi-agent", None)
 
 
 def get_adapter(name: str) -> AgentAdapter:

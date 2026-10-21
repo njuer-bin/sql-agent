@@ -48,6 +48,7 @@ class SingleShotResult:
     error: str | None = None
     history: list[dict] | None = None  # W2 纠错轨迹（single-shot 恒为 None）
     retrieved: list[str] | None = None  # W3 记忆检索命中的 memory_id
+    evidence: list[str] | None = None  # W4 已执行的证据链步骤标签
 
     def __post_init__(self) -> None:
         if self.tool_outputs is None:
@@ -56,6 +57,8 @@ class SingleShotResult:
             self.history = []
         if self.retrieved is None:
             self.retrieved = []
+        if self.evidence is None:
+            self.evidence = []
 
 
 class SingleShotAgent:
