@@ -16,13 +16,13 @@
       }
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "answer",
       "name": "done",
       "ok": true

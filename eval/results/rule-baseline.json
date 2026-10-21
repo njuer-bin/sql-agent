@@ -87,7 +87,7 @@
     "memory_answer_acc": 0.0,
     "memory_retrieval_acc": 0.0,
     "adapter": "rule-baseline",
-    "elapsed_sec": 0.15
+    "elapsed_sec": 0.11
   },
   "verdicts": [
     {

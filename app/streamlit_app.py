@@ -13,8 +13,10 @@
 from __future__ import annotations
 
 import glob
+import io
 import json
 import os
+import re
 import sqlite3
 import sys
 
@@ -30,6 +32,97 @@ from agent.llm import LLMConfig  # noqa: E402
 
 # 结果里最长的表预览
 _TABLE_MAX_ROWS = 8
+
+# 用户上传数据落盘位置 + 合法库名
+UPLOAD_DIR = os.path.join(ROOT, "data", "uploaded")
+_SAFE_SQL_NAME = re.compile(r"^[A-Za-z0-9_\-]+$")
+
+
+def _handle_uploads(files, target_db: str, msgs: list[str]) -> None:
+    """把上传的 CSV / SQL dump 写入 target_db（SQLite）。
+
+    - *.csv：pandas 读取（utf-8-sig → gbk → utf-8 编码回退）→ 一张 table
+    - 其他（.sql/.txt/.dump）：按 SQLite 脚本整体执行（本项目自产 dump 兼容）
+    单个文件失败不影响其余文件，错误收集进 msgs。
+    """
+    import pandas as pd
+
+    os.makedirs(os.path.dirname(target_db), exist_ok=True)
+    con = sqlite3.connect(target_db)
+    try:
+        for f in files:
+            try:
+                raw = f.getvalue()
+                if f.name.lower().endswith(".csv"):
+                    df = None
+                    last_err: Exception | None = None
+                    for enc in ("utf-8-sig", "gbk", "utf-8"):
+                        try:
+                            df = pd.read_csv(io.BytesIO(raw), encoding=enc)
+                            break
+                        except (ValueError, UnicodeDecodeError) as e:
+                            last_err = e
+                    if df is None:
+                        msgs.append(("err", f"{f.name}: 解析失败 {last_err}"))
+                        continue
+                    tname = os.path.splitext(os.path.basename(f.name))[0]
+                    tname = re.sub(r"[^\w\-]+", "_", tname).strip("_") or "table"
+                    df.to_sql(tname, con, if_exists="replace", index=False)
+                    msgs.append(("ok",
+                                 f"{f.name} → 表 {tname}（{len(df)} 行 × "
+                                 f"{len(df.columns)} 列）"))
+                else:
+                    try:
+                        text = raw.decode("utf-8")
+                    except UnicodeDecodeError:
+                        text = raw.decode("gbk", "replace")
+                    con.executescript(text)
+                    msgs.append(("ok", f"{f.name}: SQL 脚本已执行"))
+            except sqlite3.Error as e:
+                msgs.append(("err", f"{f.name}: SQL 执行失败 {e}"))
+        con.commit()
+    finally:
+        con.close()
+
+
+def _render_upload_section() -> None:  # pragma: no cover
+    """侧栏上传区：CSV/SQL → SQLite（新库或追加到当前库）。"""
+    import streamlit as st
+
+    files = st.file_uploader(
+        "上传 CSV / SQL 数据（可多选）",
+        type=["csv", "sql", "txt", "dump"],
+        accept_multiple_files=True,
+        key="_datasrc_upload",
+    )
+    files = files or []
+    sig = ",".join(f"{f.name}:{f.size}" for f in files)
+    if files and st.session_state.get("_upload_sig") != sig:
+        mode = st.radio("写入目标", ["新建库", "追加到当前库"],
+                        horizontal=True, key="_up_mode")
+        target = None
+        if mode == "新建库":
+            name = st.text_input("新库名（字母/数字/-/_）", key="_up_name",
+                                 placeholder="uploaded_sales")
+            if name and _SAFE_SQL_NAME.match(name.strip()):
+                target = os.path.join(UPLOAD_DIR, name.strip() + ".db")
+            elif name:
+                st.caption("库名只允许字母、数字、-、_")
+        else:
+            prev = st.session_state.get("_db_sel")
+            if prev and os.path.exists(prev):
+                target = prev
+            else:
+                st.caption("当前没有已选中的数据库，请先选择或改为新建库")
+        if st.button("导入", type="primary", key="_up_go",
+                     disabled=not target):
+            msgs: list[tuple[str, str]] = []
+            _handle_uploads(files, target, msgs)
+            st.session_state["_upload_sig"] = sig
+            st.session_state["_db_sel"] = target  # selectbox 尚未实例化
+            for kind, m in msgs:
+                (st.success if kind == "ok" else st.error)(m)
+            st.rerun()
 
 
 def _result_table(agent_output) -> list[list] | None:
@@ -154,13 +247,18 @@ def run_streamlit() -> None:  # pragma: no cover
     st.title("经营分析多智能体助手")
     st.caption("Supervisor + 取数/检索/归因专家 + 对抗式验证（offline / LLM 双通道）")
 
-    # 侧栏：选择数据文件（agents 的取数全部定向到所选库）
-    dbs = _list_dbs(ROOT)
+    # 侧栏：上传数据（CSV/SQL → sqlite）+ 选择数据文件
     with st.sidebar:
         st.header("数据源")
+        _render_upload_section()
+        dbs = _list_dbs(ROOT)
+        prev = st.session_state.get("_db_sel")
+        if prev and prev not in dbs:
+            st.session_state.pop("_db_sel", None)  # 旧库被删时重置选择
         db_choice = st.selectbox(
             "数据库文件", dbs if dbs else ["(data/ 下没有 .db 文件)"],
             format_func=lambda p: os.path.relpath(p, ROOT),
+            key="_db_sel",
         )
         if db_choice.startswith("("):
             db_choice = ""

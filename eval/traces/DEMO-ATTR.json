@@ -20,31 +20,31 @@
       }
     },
     {
-      "t": 0.061,
+      "t": 0.058,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.061,
+      "t": 0.058,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.061,
+      "t": 0.058,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.061,
+      "t": 0.058,
       "phase": "verify",
       "name": "adversarial_verifier",
       "ok": true
     },
     {
-      "t": 0.061,
+      "t": 0.058,
       "phase": "answer",
       "name": "done",
       "ok": true
