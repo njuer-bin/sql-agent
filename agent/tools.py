@@ -68,7 +68,10 @@ class ToolBox:
 
         if self._con is None:
             con = sqlite3.connect(
-                f"file:{self.db_path}?mode=ro", uri=True, timeout=self.timeout_sec
+                f"file:{self.db_path}?mode=ro", uri=True, timeout=self.timeout_sec,
+                # 工具箱可能在不同的宿主线程序列中被复用（如 Streamlit rerun）；
+                # 只读连接且 rerun 串行执行，允许跨线程共享是安全的。
+                check_same_thread=False,
             )
             # 进度回调：每 1024 条 VM 指令检查一次墙钟，到点中断取数
             con.set_progress_handler(self._timeout_tick, 1024)

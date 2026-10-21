@@ -457,8 +457,23 @@ class Supervisor:
             "attribution": AttributionExpert(toolbox, self.store),
         }
 
+    @staticmethod
+    def _infer_qtype(question: dict) -> str:
+        """question_type 缺失时（如 UI 自由提问）按问题文本推断路由，
+        与评测集已有显式 qtype 的行为互不影响。"""
+        text = str(question.get("question") or "")
+        if any(k in text for k in ("为什么", "为何", "原因", "归因", "归到", "解释",
+                                   "下降", "上升", "流失", "波动", "异常", "变化")):
+            return "attribution"
+        if any(k in text for k in ("口径", "定义", "是指", "怎么算", "如何计算",
+                                   "规则", "约定", "分母", "分子", "是什么意思")):
+            return "memory"
+        return "data"
+
     def route(self, question: dict) -> str:
-        qt = question.get("question_type", "data")
+        qt = question.get("question_type")
+        if not qt:  # UI 自由提问：按文本推断，而非默认 data
+            qt = self._infer_qtype(question)
         return {"data": "data", "memory": "retrieval",
                 "attribution": "attribution"}.get(qt, "data")
 
