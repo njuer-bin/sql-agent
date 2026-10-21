@@ -55,14 +55,9 @@ def _head(sql: str, limit: int = 64) -> str:
 
 
 def _time_filter_present(skeleton: str, date_col: str) -> bool:
-    """检测是否有针对日期列的过滤：比较运算 / BETWEEN / IN / strftime 月分桶。"""
+    """检测是否有针对日期列的过滤：显式比较运算 / BETWEEN / IN / strftime 月分桶。"""
     p1 = r"\b[\w\.]*\b" + date_col + r"\b\s*(BETWEEN|>=|<=|<|>|=|IN\b)"
     if re.search(p1, skeleton, re.IGNORECASE):
-        # 排除 GROUP BY / ORDER BY / ON 里的引用被误判 —— 它们不构成过滤。
-        no_join = re.sub(
-            r"\b(JOIN|ON|GROUP\s+BY|ORDER\s+BY|HAVING|SELECT|AS)\b.*$" if False else r"%",
-            "", skeleton, flags=re.DOTALL if False else 0)
-        _ = no_join  # 占位：保持简单，主判定靠显式比较运算
         return True
     p2 = r"\bstrftime\s*\(\s*'%Y-%m'\s*,\s*[\w\.]*\b" + date_col + r"\b\s*\)\s*(BETWEEN|>=|<=|<|>|=|IN\b)"
     return bool(re.search(p2, skeleton, re.IGNORECASE))

@@ -190,7 +190,6 @@ def build_offline_sql(q: str) -> str | None:
 
     if metric == "new_buyer_count":
         base_where = [f"c.first_order_date BETWEEN '{start}' AND '{end}'"]
-        col, alias = "c.customer_id", "new_buyers"
         join = " JOIN dim_region r ON r.region_id=c.region_id" if dim in ("region_name", None) else ""
         if dim == "region_name" or not dim:
             sql = (

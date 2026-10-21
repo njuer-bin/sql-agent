@@ -6,7 +6,6 @@ runner/verifier 只经由 ADAPTERS 注册表与 adapter.name 交互。
 
 from __future__ import annotations
 
-import json
 import os
 import sys
 from typing import Any

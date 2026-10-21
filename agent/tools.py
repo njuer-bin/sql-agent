@@ -122,11 +122,6 @@ class ToolBox:
     # ------------------------------------------------------------------
     # 工具 2：schema_lookup
     # ------------------------------------------------------------------
-    _SCHEMA_SNIPPET = re.compile(
-        r"-- [^\n]*\n|^CREATE TABLE\s+(\w+).*?;.*?(?=\n\n|\Z)",
-        re.DOTALL | re.MULTILINE,
-    )
-
     def schema_lookup(self, keywords: list[str] | None = None) -> str:
         """返回建表语句。给定 keywords（表名/列名）时只返回相关表。"""
         text = open(self.schema_path, encoding="utf-8").read()
