@@ -125,6 +125,27 @@ class ToolBox:
         return 0
 
     # ------------------------------------------------------------------
+    # 工具 1b：schema 兼容性探测（上传外部库时的诚实拒答依据）
+    # ------------------------------------------------------------------
+    def has_core_tables(self) -> bool:
+        """当前 db 是否含本项目分析所依赖的核心表（fact_order）。
+
+        上传的外部库（如只有 cities 一张维表）不含核心表 → 取数专家应
+        诚实说明无法针对该 schema 生成经营分析 SQL，而不是反复瞎编。
+        """
+        try:
+            con = sqlite3.connect(f"file:{self.db_path}?mode=ro", uri=True,
+                                  check_same_thread=False)
+            try:
+                tabs = {r[0] for r in con.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table'")}
+            finally:
+                con.close()
+        except sqlite3.Error:
+            return False
+        return "fact_order" in tabs
+
+    # ------------------------------------------------------------------
     # 工具 2：schema_lookup
     # ------------------------------------------------------------------
     def schema_lookup(self, keywords: list[str] | None = None) -> str:

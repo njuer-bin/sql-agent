@@ -96,3 +96,23 @@ def test_same_name_csv_is_replaced(tmp_path):
         assert n == 2  # replace 而非重复追加
     finally:
         con.close()
+
+
+def test_agent_refuses_on_foreign_schema(tmp_path):
+    """上传的外部库（无 fact_order）→ SingleShot 诚实拒答并可自救。"""
+    from agent.single_shot import SingleShotAgent
+    from agent.tools import ToolBox
+
+    db = str(tmp_path / "foreign.db")
+    _handle_uploads([_mk("cities.csv", "city,new_pct\n杭州,2.44\n".encode("gbk"))],
+                    db, [])
+    tb = ToolBox(db_path=db)
+    assert tb.has_core_tables() is False
+    out = SingleShotAgent(tb).answer(
+        {"qid": "x", "question_type": "data", "question": "哪个城市退款率高"})
+    assert out.error == "schema_missing_in_db"
+    assert "fact_order" in out.answer and "不会" in out.answer
+
+    # 完整 schema 的库不受影响
+    main = ToolBox()
+    assert main.has_core_tables() is True

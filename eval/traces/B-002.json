@@ -16,13 +16,13 @@
       }
     },
     {
-      "t": 0.06,
+      "t": 0.057,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.06,
+      "t": 0.057,
       "phase": "answer",
       "name": "done",
       "ok": true

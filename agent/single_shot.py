@@ -87,6 +87,22 @@ class SingleShotAgent:
             out.tool_outputs.append('{"note": "no_tool_call_never_executed_sql"}')
             return out
 
+        # schema 兼容性：上传的外部库可能不含 fact_order 等核心分析表
+        # —— 诚实说明并指引，而不是反复尝试生成必然失败的 SQL
+        if not self.tools.has_core_tables():
+            out.answer = (
+                "当前数据库里没有 fact_order 等核心经营分析表（可能是刚上传"
+                "的独立数据源），无法生成可靠的取数 SQL；我不会对陌生 schema"
+                "瞎编查询。请把侧栏「数据库文件」切回 data/warehouse/"
+                "warehouse.db，或上传包含完整 schema（fact_order/dim_*）的"
+                "库后再提问。")
+            out.error = "schema_missing_in_db"
+            out.steps = 1
+            out.tool_outputs.append(json.dumps(
+                {"note": "db_has_no_fact_order", "db": self.tools.db_path},
+                ensure_ascii=False))
+            return out
+
         sql = self._generate_sql(text, question)
         if sql is None:
             out.answer = "我不确定如何取这个数（缺时间或口径信息），不会瞎猜。"

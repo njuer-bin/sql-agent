@@ -38,6 +38,21 @@ UPLOAD_DIR = os.path.join(ROOT, "data", "uploaded")
 _SAFE_SQL_NAME = re.compile(r"^[A-Za-z0-9_\-]+$")
 
 
+def _has_core_tables(db_path: str) -> bool:
+    """该库是否含 fact_order 核心表（决定上传后是否自动切换数据源）。"""
+    try:
+        con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True,
+                              check_same_thread=False)
+        try:
+            tabs = {r[0] for r in con.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'")}
+        finally:
+            con.close()
+    except sqlite3.Error:
+        return False
+    return "fact_order" in tabs
+
+
 def _handle_uploads(files, target_db: str, msgs: list[str]) -> None:
     """把上传的 CSV / SQL dump 写入 target_db（SQLite）。
 
@@ -119,10 +134,17 @@ def _render_upload_section() -> None:  # pragma: no cover
             msgs: list[tuple[str, str]] = []
             _handle_uploads(files, target, msgs)
             st.session_state["_upload_sig"] = sig
-            st.session_state["_db_sel"] = target  # selectbox 尚未实例化
             for kind, m in msgs:
                 (st.success if kind == "ok" else st.error)(m)
-            st.rerun()
+            if _has_core_tables(target):
+                # 完整 schema 的库 → 自动切换为当前数据源
+                st.session_state["_db_sel"] = target  # selectbox 未实例化
+                st.rerun()
+            else:
+                st.info("导入完成，但这个库不含 fact_order 等核心分析表，"
+                        "后续提问仍会使用当前选中的数据库。要分析自己的"
+                        "经营数据请上传含完整 schema（fact_order/dim_*）"
+                        "的库，或选择「追加到当前库」把表并入。")
 
 
 def _result_table(agent_output) -> list[list] | None:
@@ -281,6 +303,15 @@ def run_streamlit() -> None:  # pragma: no cover
         with st.spinner("Supervisor 路由 → 专家 → 对抗验证 ..."):
             out_raw = supervisor.answer(
                 {"qid": "ui-" + str(hash(question) % 10000), "question": question})
+            # 兜底：agent 层没给文字、只有错误码时，UI 给出可自救的解释
+            if not str(out_raw.answer or "").strip() and out_raw.error and \
+                    db_choice and not _has_core_tables(db_choice):
+                out_raw.answer = (
+                    "回答失败：当前数据库 " + os.path.relpath(db_choice, ROOT) +
+                    " 不含 fact_order 等核心分析表。请在侧栏把「数据库文件」"
+                    "切回 data\\warehouse\\warehouse.db，或上传包含完整 "
+                    "schema 的库。")
+                out_raw.error = out_raw.error or "schema_missing_in_db"
             out = type("O", (), {})()
             out.answer = out_raw.answer
             out.sql = out_raw.sql
