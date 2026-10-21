@@ -14,6 +14,7 @@ import json
 import os
 import urllib.error
 import urllib.request
+import uuid
 from typing import Any
 
 FORBIDDEN_CALLABLES = ("eval", "exec", "compile", "__import__")
@@ -32,6 +33,9 @@ class LLMConfig:
         model = _env("SQLAGENT_LLM_MODEL")
         self.model: str = model
         self.timeout_sec: float = float(_env("SQLAGENT_LLM_TIMEOUT_SEC", "60"))
+        # 部分网关（opencode Go）要求稳定会话头用于路由/缓存；
+        # 进程内固定一个，可用环境变量固定跨进程复现。
+        self.session_id: str = _env("SQLAGENT_LLM_SESSION_ID") or uuid.uuid4().hex
 
     @property
     def enabled(self) -> bool:
@@ -63,6 +67,11 @@ def chat(messages: list[dict], cfg: LLMConfig | None = None, temperature: float 
         headers={
             "Content-Type": "application/json",
             "Authorization": f"Bearer {cfg.api_key}",
+            # 部分网关（如 opencode Go）基于 User-Agent 做客户端识别，
+            # 默认 Python-urllib 会被 WAF 拦截，必须携带应用身份 UA。
+            "User-Agent": "sql-agent/1.0",
+            # opencode Go 要求的稳定会话头（路由/缓存优化）。
+            "x-opencode-session": cfg.session_id,
         },
         method="POST",
     )
