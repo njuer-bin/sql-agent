@@ -52,7 +52,7 @@
       }
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "protocol",
       "name": "agent_message:data",
       "ok": true,
@@ -70,7 +70,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:0088a463",
+            "evidence_id": "sql:0022485a",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT ROUND(AVG(resolve_hours),2) AS avg_hours FROM fact_service_ticket WHERE created_date BETWEEN '2026-09-01' AND '2026-09-30' AND is_resolved=1",
@@ -83,13 +83,13 @@
       }
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "answer",
       "name": "done",
       "ok": true

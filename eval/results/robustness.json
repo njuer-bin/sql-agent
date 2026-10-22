@@ -1,0 +1,54 @@
+{
+ "cases": [
+  {
+   "qid": "R-01",
+   "kind": "time",
+   "kind_label": "时间窗置换",
+   "checks": {
+    "base_has_rows": true,
+    "windows_applied": true
+   },
+   "pass": true
+  },
+  {
+   "qid": "R-02",
+   "kind": "region",
+   "kind_label": "地区置换",
+   "checks": {
+    "region_followed": true
+   },
+   "pass": true
+  },
+  {
+   "qid": "R-03",
+   "kind": "schema",
+   "kind_label": "schema 幽灵表引用",
+   "checks": {
+    "honest_refusal": false,
+    "no_fabrication": true
+   },
+   "pass": true
+  },
+  {
+   "qid": "R-04",
+   "kind": "memory_conflict",
+   "kind_label": "记忆口径冲突注入",
+   "checks": {
+    "blocked_or_honest": true
+   },
+   "pass": true
+  },
+  {
+   "qid": "R-05",
+   "kind": "unrelated_inject",
+   "kind_label": "无关注入",
+   "checks": {
+    "rows_pinned": true
+   },
+   "pass": true
+  }
+ ],
+ "n": 5,
+ "n_pass": 5,
+ "pass_rate": 1.0
+}

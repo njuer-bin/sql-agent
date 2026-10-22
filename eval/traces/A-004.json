@@ -52,7 +52,7 @@
       }
     },
     {
-      "t": 0.026,
+      "t": 0.035,
       "phase": "protocol",
       "name": "agent_message:data",
       "ok": true,
@@ -70,7 +70,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:037adf2b",
+            "evidence_id": "sql:02891a65",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT ROUND(100.0*SUM(refund_amount)/SUM(pay_amount),2) AS refund_rate FROM fact_order o WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-09-01' AND '2026-09-30'",
@@ -83,13 +83,13 @@
       }
     },
     {
-      "t": 0.026,
+      "t": 0.035,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.026,
+      "t": 0.035,
       "phase": "answer",
       "name": "done",
       "ok": true

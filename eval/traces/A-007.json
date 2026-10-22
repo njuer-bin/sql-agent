@@ -52,7 +52,7 @@
       }
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "protocol",
       "name": "agent_message:data",
       "ok": true,
@@ -70,7 +70,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:01c732ed",
+            "evidence_id": "sql:0573e537",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT COUNT(*) AS tickets FROM fact_service_ticket WHERE created_date BETWEEN '2026-09-01' AND '2026-09-30'",
@@ -83,13 +83,13 @@
       }
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "answer",
       "name": "done",
       "ok": true

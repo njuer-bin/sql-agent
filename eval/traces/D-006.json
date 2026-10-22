@@ -50,7 +50,7 @@
       }
     },
     {
-      "t": 0.001,
+      "t": 0.0,
       "phase": "protocol",
       "name": "agent_message:retrieval",
       "ok": true,
@@ -91,13 +91,13 @@
       }
     },
     {
-      "t": 0.001,
+      "t": 0.0,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.001,
+      "t": 0.0,
       "phase": "answer",
       "name": "done",
       "ok": true

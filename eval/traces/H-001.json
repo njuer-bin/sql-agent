@@ -25,11 +25,11 @@
           ]
         },
         "constraints": {
-          "metric": "repurchase_rate"
+          "metric": "sessions"
         },
         "rationale": [
           "question_type 显式标注=memory",
-          "识别指标 repurchase_rate（约束取数口径）"
+          "识别指标 sessions（约束取数口径）"
         ]
       }
     },
@@ -47,7 +47,7 @@
       }
     },
     {
-      "t": 0.001,
+      "t": 0.0,
       "phase": "protocol",
       "name": "agent_message:retrieval",
       "ok": true,
@@ -132,13 +132,13 @@
       }
     },
     {
-      "t": 0.001,
+      "t": 0.0,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.001,
+      "t": 0.0,
       "phase": "answer",
       "name": "done",
       "ok": true

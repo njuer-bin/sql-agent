@@ -2,19 +2,19 @@
   "adapter": "multi-agent",
   "aggregate": {
     "n": 46,
-    "final": 0.8582,
+    "final": 0.8611,
     "hallucination_rate": 0.0,
     "execution_acc": 0.64,
     "schema_acc": 1.0,
     "result_acc": 0.6,
-    "answer_acc": 0.9371,
+    "answer_acc": 0.9437,
     "retrieval_acc": 1.0,
     "evidence_acc": 0.3889,
     "n_data": 25,
     "n_memory": 21,
     "avg_steps": 2.04,
-    "avg_tokens": 421.1,
-    "avg_latency_ms": 24.1,
+    "avg_tokens": 426.3,
+    "avg_latency_ms": 14.5,
     "by_category": {
       "a_basic": {
         "n": 8,
@@ -66,9 +66,9 @@
       },
       "g_attribution": {
         "n": 6,
-        "final": 0.4775,
+        "final": 0.5,
         "hallucination_rate": 0.0,
-        "answer_acc": 0.95,
+        "answer_acc": 1.0,
         "result_acc": 0.0,
         "retrieval_acc": 0.0
       },
@@ -82,12 +82,12 @@
       }
     },
     "attribution_hallucination_rate": 0.0,
-    "attribution_answer_acc": 0.8778,
+    "attribution_answer_acc": 0.9111,
     "attribution_result_acc": 0.0,
     "memory_answer_acc": 0.9147,
     "memory_retrieval_acc": 1.0,
     "adapter": "multi-agent",
-    "elapsed_sec": 2.71
+    "elapsed_sec": 1.41
   },
   "verdicts": [
     {
@@ -109,7 +109,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 70,
-      "latency_ms": 28
+      "latency_ms": 24
     },
     {
       "qid": "A-002",
@@ -151,7 +151,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 162,
-      "latency_ms": 32
+      "latency_ms": 29
     },
     {
       "qid": "A-004",
@@ -172,7 +172,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 77,
-      "latency_ms": 25
+      "latency_ms": 32
     },
     {
       "qid": "A-005",
@@ -193,7 +193,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 93,
-      "latency_ms": 26
+      "latency_ms": 34
     },
     {
       "qid": "A-006",
@@ -277,7 +277,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 156,
-      "latency_ms": 30
+      "latency_ms": 32
     },
     {
       "qid": "B-002",
@@ -298,7 +298,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 215,
-      "latency_ms": 54
+      "latency_ms": 50
     },
     {
       "qid": "B-003",
@@ -319,7 +319,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 173,
-      "latency_ms": 28
+      "latency_ms": 32
     },
     {
       "qid": "B-004",
@@ -340,7 +340,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 129,
-      "latency_ms": 1
+      "latency_ms": 3
     },
     {
       "qid": "B-005",
@@ -361,7 +361,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 188,
-      "latency_ms": 31
+      "latency_ms": 30
     },
     {
       "qid": "B-006",
@@ -382,7 +382,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 152,
-      "latency_ms": 44
+      "latency_ms": 30
     },
     {
       "qid": "B-007",
@@ -403,7 +403,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 122,
-      "latency_ms": 97
+      "latency_ms": 47
     },
     {
       "qid": "B-008",
@@ -424,7 +424,7 @@
       "notes": [],
       "steps": 1,
       "tokens": 154,
-      "latency_ms": 71
+      "latency_ms": 25
     },
     {
       "qid": "C-001",
@@ -602,7 +602,7 @@
       "notes": [],
       "steps": 2,
       "tokens": 622,
-      "latency_ms": 68
+      "latency_ms": 24
     },
     {
       "qid": "D-003",
@@ -624,7 +624,7 @@
       "notes": [],
       "steps": 2,
       "tokens": 424,
-      "latency_ms": 66
+      "latency_ms": 26
     },
     {
       "qid": "D-004",
@@ -647,7 +647,7 @@
       "notes": [],
       "steps": 2,
       "tokens": 656,
-      "latency_ms": 73
+      "latency_ms": 28
     },
     {
       "qid": "D-005",
@@ -669,7 +669,7 @@
       "notes": [],
       "steps": 2,
       "tokens": 722,
-      "latency_ms": 71
+      "latency_ms": 31
     },
     {
       "qid": "D-006",
@@ -787,7 +787,7 @@
       "notes": [],
       "steps": 2,
       "tokens": 742,
-      "latency_ms": 69
+      "latency_ms": 26
     },
     {
       "qid": "F-001",
@@ -832,7 +832,7 @@
       "notes": [],
       "steps": 2,
       "tokens": 740,
-      "latency_ms": 76
+      "latency_ms": 30
     },
     {
       "qid": "F-003",
@@ -854,7 +854,7 @@
       "notes": [],
       "steps": 2,
       "tokens": 573,
-      "latency_ms": 70
+      "latency_ms": 26
     },
     {
       "qid": "F-004",
@@ -1008,17 +1008,19 @@
         "execution": 0.0,
         "schema": 1.0,
         "result": 0.0,
-        "answer": 0.7,
+        "answer": 1.0,
         "evidence": 0.0
       },
-      "final": 0.315,
+      "final": 0.45,
       "hallucination": false,
       "hallucinated_numbers": [],
       "memory_hit": 0.0,
-      "matched_memory_ids": [],
+      "matched_memory_ids": [
+        "ep-2026-04-douyin"
+      ],
       "notes": [],
       "steps": 5,
-      "tokens": 382,
+      "tokens": 621,
       "latency_ms": 0
     },
     {
@@ -1063,7 +1065,7 @@
       "notes": [],
       "steps": 2,
       "tokens": 656,
-      "latency_ms": 68
+      "latency_ms": 28
     },
     {
       "qid": "H-003",
@@ -1085,7 +1087,7 @@
       "notes": [],
       "steps": 2,
       "tokens": 665,
-      "latency_ms": 3
+      "latency_ms": 1
     },
     {
       "qid": "H-004",

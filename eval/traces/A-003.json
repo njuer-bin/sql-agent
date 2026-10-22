@@ -52,7 +52,7 @@
       }
     },
     {
-      "t": 0.033,
+      "t": 0.03,
       "phase": "protocol",
       "name": "agent_message:data",
       "ok": true,
@@ -71,7 +71,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:04ad073d",
+            "evidence_id": "sql:0298bb36",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT c.channel_name, ROUND(SUM(o.pay_amount),2) AS gmv FROM fact_order o JOIN dim_channel c ON c.channel_id=o.channel_id WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-09-01' AND '2026-09-30' GROUP BY c.channel_name ORDER BY gmv DESC",
@@ -84,13 +84,13 @@
       }
     },
     {
-      "t": 0.033,
+      "t": 0.03,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.033,
+      "t": 0.03,
       "phase": "answer",
       "name": "done",
       "ok": true

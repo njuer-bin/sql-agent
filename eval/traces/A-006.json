@@ -71,7 +71,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:027a53d8",
+            "evidence_id": "sql:03b6c7d9",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT strftime('%Y-%m', order_date) AS ym, ROUND(SUM(pay_amount),2) AS gmv FROM fact_order WHERE order_status='paid' AND order_date >= '2026-01-01' AND strftime('%Y-%m', order_date) <= '2026-12' GROUP BY ym ORDER BY gmv DESC LIMIT 1",

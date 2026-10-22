@@ -54,7 +54,7 @@
       }
     },
     {
-      "t": 0.07,
+      "t": 0.026,
       "phase": "protocol",
       "name": "agent_message:retrieval",
       "ok": true,
@@ -128,19 +128,19 @@
       }
     },
     {
-      "t": 0.07,
+      "t": 0.026,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.07,
+      "t": 0.026,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.07,
+      "t": 0.026,
       "phase": "answer",
       "name": "done",
       "ok": true

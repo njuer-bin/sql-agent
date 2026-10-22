@@ -1,0 +1,98 @@
+{
+  "qid": "R-03",
+  "n_events": 5,
+  "events": [
+    {
+      "t": 0.0,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "data",
+        "agents": [
+          [
+            "data"
+          ]
+        ],
+        "graph": {
+          "data": []
+        },
+        "stage_dag": {
+          "data": [
+            "sql_generate",
+            "repair_loop",
+            "answer_summarize"
+          ]
+        },
+        "constraints": {
+          "metric": "gmv_gross",
+          "time_window": [
+            "2026-09-01",
+            "2026-09-30"
+          ]
+        },
+        "rationale": [
+          "question_type 显式标注=data",
+          "识别指标 gmv_gross（约束取数口径）",
+          "解析出时间窗口（无时间窗问题由 NL2SQL 决策）"
+        ]
+      }
+    },
+    {
+      "t": 0.0,
+      "phase": "route",
+      "name": "supervisor→data",
+      "ok": true,
+      "detail": {
+        "dag": [
+          "sql_generate",
+          "repair_loop",
+          "answer_summarize"
+        ]
+      }
+    },
+    {
+      "t": 0.025,
+      "phase": "protocol",
+      "name": "agent_message:data",
+      "ok": true,
+      "detail": {
+        "agent": "data",
+        "plan_ref": "sql_generate",
+        "status": "ok",
+        "payload": {
+          "sql": "SELECT ROUND(SUM(pay_amount),2) AS gmv FROM fact_order o WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-09-01' AND '2026-09-30'",
+          "columns": [
+            "gmv"
+          ],
+          "rows": null,
+          "execution_error": null
+        },
+        "evidence": [
+          {
+            "evidence_id": "sql:050bbacd",
+            "source": "sql",
+            "ref": "tool_outputs[0]",
+            "content": "SELECT ROUND(SUM(pay_amount),2) AS gmv FROM fact_order o WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-09-01' AND '2026-09-30'",
+            "provenance": {
+              "kind": "query"
+            }
+          }
+        ],
+        "claim": null
+      }
+    },
+    {
+      "t": 0.025,
+      "phase": "tool",
+      "name": "tool_output",
+      "ok": true
+    },
+    {
+      "t": 0.025,
+      "phase": "answer",
+      "name": "done",
+      "ok": true
+    }
+  ]
+}

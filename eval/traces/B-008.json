@@ -54,7 +54,7 @@
       }
     },
     {
-      "t": 0.073,
+      "t": 0.028,
       "phase": "protocol",
       "name": "agent_message:data",
       "ok": true,
@@ -73,7 +73,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:041ef942",
+            "evidence_id": "sql:0256cb56",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT r.city, ROUND(SUM(o.pay_amount),2) AS gmv FROM fact_order o JOIN dim_channel c ON c.channel_id=o.channel_id JOIN dim_region r ON r.region_id=o.region_id WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-09-01' AND '2026-09-30' AND r.region_name='华东' GROUP BY r.city ORDER BY gmv DESC LIMIT 5",
@@ -86,13 +86,13 @@
       }
     },
     {
-      "t": 0.073,
+      "t": 0.028,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.073,
+      "t": 0.028,
       "phase": "answer",
       "name": "done",
       "ok": true

@@ -1,0 +1,180 @@
+{
+  "qid": "DBG-G-002",
+  "n_events": 9,
+  "events": [
+    {
+      "t": 0.001,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "attribution",
+        "agents": [
+          [
+            "attribution"
+          ]
+        ],
+        "graph": {
+          "attribution": [
+            "retrieval"
+          ]
+        },
+        "stage_dag": {
+          "attribution": [
+            "time_window",
+            "sql_execute_current",
+            "sql_execute_baseline",
+            "memory_hypothesis",
+            "drilldown",
+            "verify_adversarial",
+            "answer_compose"
+          ]
+        },
+        "constraints": {
+          "metric": "aov",
+          "region": "华东",
+          "time_window": [
+            "2026-08-01",
+            "2026-08-31"
+          ]
+        },
+        "rationale": [
+          "question_type 显式标注=attribution",
+          "识别指标 aov（约束取数口径）",
+          "识别地区维度",
+          "解析出时间窗口（无时间窗问题由 NL2SQL 决策）",
+          "归因需口径/事件/流程证据 —— 依赖检索结论"
+        ]
+      }
+    },
+    {
+      "t": 0.001,
+      "phase": "route",
+      "name": "supervisor→attribution",
+      "ok": true,
+      "detail": {
+        "dag": [
+          "time_window",
+          "sql_execute_current",
+          "sql_execute_baseline",
+          "memory_hypothesis",
+          "drilldown",
+          "verify_adversarial",
+          "answer_compose"
+        ]
+      }
+    },
+    {
+      "t": 0.099,
+      "phase": "protocol",
+      "name": "agent_message:attribution",
+      "ok": false,
+      "detail": {
+        "agent": "attribution",
+        "plan_ref": "answer_compose",
+        "status": "ok",
+        "payload": {
+          "answer": "对抗验证未通过，以下结论被拦下：[pct_traceability] 答案中的百分比/百分点数字无法溯源（同值或差值证据均可）: [7.03]。我不会发布未经验证的结论。",
+          "metric_evidence_steps": [
+            "对抗验证拦截"
+          ]
+        },
+        "evidence": [
+          {
+            "evidence_id": "data:sql:03ad7273",
+            "source": "sql",
+            "ref": "tool_outputs[0]",
+            "content": "SELECT ROUND(SUM(pay_amount)/COUNT(*),2) AS aov FROM fact_order o JOIN dim_region r ON r.region_id=o.region_id WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-08-01' AND '2026-08-31' AND r.region_name='华东'",
+            "provenance": {
+              "kind": "query",
+              "from": "attribution"
+            }
+          },
+          {
+            "evidence_id": "memory:ep-2026-08-subsidy",
+            "source": "memory",
+            "ref": "ep-2026-08-subsidy",
+            "content": "",
+            "provenance": {
+              "from": "attribution",
+              "tool_index": 2
+            }
+          },
+          {
+            "evidence_id": "memory:pr-attribution-playbook",
+            "source": "memory",
+            "ref": "pr-attribution-playbook",
+            "content": "",
+            "provenance": {
+              "from": "attribution",
+              "tool_index": 2
+            }
+          },
+          {
+            "evidence_id": "memory:sem-aov-v1",
+            "source": "memory",
+            "ref": "sem-aov-v1",
+            "content": "",
+            "provenance": {
+              "from": "attribution",
+              "tool_index": 2
+            }
+          },
+          {
+            "evidence_id": "memory:sem-cancel-trap-v1",
+            "source": "memory",
+            "ref": "sem-cancel-trap-v1",
+            "content": "",
+            "provenance": {
+              "from": "attribution",
+              "tool_index": 2
+            }
+          }
+        ],
+        "claim": {
+          "agent": "attribution",
+          "statement": "对抗验证未通过，以下结论被拦下：[pct_traceability] 答案中的百分比/百分点数字无法溯源（同值或差值证据均可）: [7.03]。我不会发布未经验证的结论。",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "t": 0.099,
+      "phase": "protocol",
+      "name": "claim_issue:claim 没有任何证据支撑（幽灵断言）",
+      "ok": false,
+      "error": "claim 没有任何证据支撑（幽灵断言）"
+    },
+    {
+      "t": 0.099,
+      "phase": "tool",
+      "name": "tool_output",
+      "ok": true
+    },
+    {
+      "t": 0.099,
+      "phase": "tool",
+      "name": "tool_output",
+      "ok": true
+    },
+    {
+      "t": 0.099,
+      "phase": "retrieve",
+      "name": "memory_research",
+      "ok": true
+    },
+    {
+      "t": 0.099,
+      "phase": "verify",
+      "name": "adversarial_verifier",
+      "ok": false,
+      "error": "blocked"
+    },
+    {
+      "t": 0.099,
+      "phase": "answer",
+      "name": "done",
+      "ok": true
+    }
+  ]
+}

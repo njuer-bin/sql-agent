@@ -52,7 +52,7 @@
       }
     },
     {
-      "t": 0.099,
+      "t": 0.048,
       "phase": "protocol",
       "name": "agent_message:data",
       "ok": true,
@@ -71,7 +71,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:02da49d2",
+            "evidence_id": "sql:017f209b",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT strftime('%Y-%m', order_date) AS ym, ROUND(SUM(pay_amount),2) AS gmv FROM fact_order WHERE order_status='paid' AND order_date >= '2026-07-01' AND strftime('%Y-%m', order_date) <= '2026-09' GROUP BY ym ORDER BY ym",
@@ -84,13 +84,13 @@
       }
     },
     {
-      "t": 0.099,
+      "t": 0.048,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.099,
+      "t": 0.048,
       "phase": "answer",
       "name": "done",
       "ok": true

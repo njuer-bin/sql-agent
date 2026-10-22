@@ -52,7 +52,7 @@
       }
     },
     {
-      "t": 0.032,
+      "t": 0.034,
       "phase": "protocol",
       "name": "agent_message:data",
       "ok": true,
@@ -71,7 +71,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:04744878",
+            "evidence_id": "sql:0586106c",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "WITH per_user AS (SELECT o.region_id, o.customer_id, COUNT(*) AS n, SUM(o.refund_amount) AS ref FROM fact_order o WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-09-01' AND '2026-09-30' GROUP BY o.region_id, o.customer_id), agg AS (SELECT region_id, 100.0*COUNT(CASE WHEN n>=2 THEN 1 END)/COUNT(*) AS rep_rate FROM per_user WHERE ref=0 GROUP BY region_id) SELECT r.region_name, ROUND(a.rep_rate,2) AS repurchase_rate FROM agg a JOIN dim_region r ON r.region_id=a.region_id ORDER BY a.rep_rate DESC LIMIT 3",
@@ -84,13 +84,13 @@
       }
     },
     {
-      "t": 0.032,
+      "t": 0.034,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.032,
+      "t": 0.034,
       "phase": "answer",
       "name": "done",
       "ok": true

@@ -75,31 +75,45 @@ def _is_paid_metric(q: str) -> bool:
 
 
 def detect_metric(q: str) -> str | None:
+    """多意图问题按词面位置取「最先出现」的指标做主查询：
+    例：「GMV 做了多少？再给我复购口径的参考」应主查 GMV，
+    而非让后置的复购关键词覆盖主意图（无关注入防线）。"""
     ql = q.lower()
+
+    def _first_i(*kws: str) -> int:
+        idx = [ql.find(k) for k in kws if ql.find(k) >= 0]
+        return min(idx) if idx else 10 ** 9
+
+    cands: list[tuple[int, str]] = []
     if "解决时长" in ql:
-        return "avg_resolve_hours"
+        # 「解决时长」是最具体的指标词（「工单解决时长」复合表述也归它）
+        cands.append((_first_i("解决时长") - (10 ** 9 if "工单" in ql else 0),
+                      "avg_resolve_hours"))
     if "工单" in ql:
-        return "ticket_count"
+        cands.append((_first_i("工单"), "ticket_count"))
     if "复购率" in ql or "复购" in ql:
-        return "repurchase_rate"
+        cands.append((_first_i("复购率", "复购"), "repurchase_rate"))
     if "退款率" in ql or "退货率" in ql:
-        return "refund_rate"
+        cands.append((_first_i("退款率", "退货率"), "refund_rate"))
     if ("退款" in ql or "退货" in ql) and ("率" not in ql or "退款率" not in ql):
         # 裸「退款/退货」= 退款金额口径（如「哪个月退款最多」）；退款率在上方已拦截
-        return "refund_amount"
+        cands.append((_first_i("退款", "退货"), "refund_amount"))
     if "客单价" in ql or "单均价" in ql or "arpu" in ql:
-        return "aov"
+        cands.append((_first_i("客单价", "单均价", "arpu"), "aov"))
     if "新客" in ql:
-        return "new_buyer_count"
+        cands.append((_first_i("新客"), "new_buyer_count"))
     if "会话" in ql or "流量" in ql or "sessions" in ql:
-        return "sessions"
+        cands.append((_first_i("会话", "流量", "sessions"), "sessions"))
     if ("订单" in ql or re.search(r"下了多少单|多少单|单量|下单量", ql)) and (
         "多少" in ql or "量" in ql or "单数" in ql
     ):
-        return "order_count"
+        cands.append((_first_i("订单", "下单"), "order_count"))
     if "gmv" in ql or "成交额" in ql or "交易额" in ql or "做了多少" in ql:
-        return "gmv_gross"
-    return None
+        cands.append((_first_i("gmv", "成交额", "交易额", "做了多少"),
+                      "gmv_gross"))
+    if not cands:
+        return None
+    return min(cands, key=lambda t: t[0])[1]
 
 
 def detect_dimension(q: str) -> str | None:

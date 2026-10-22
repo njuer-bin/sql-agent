@@ -52,7 +52,7 @@
       }
     },
     {
-      "t": 0.054,
+      "t": 0.063,
       "phase": "protocol",
       "name": "agent_message:data",
       "ok": true,
@@ -70,7 +70,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:045591f3",
+            "evidence_id": "sql:0205b3aa",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT ROUND(SUM(pay_amount),2) AS gmv FROM fact_order o WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-09-01' AND '2026-09-30'",
@@ -83,13 +83,13 @@
       }
     },
     {
-      "t": 0.054,
+      "t": 0.063,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.054,
+      "t": 0.063,
       "phase": "answer",
       "name": "done",
       "ok": true

@@ -52,7 +52,7 @@
       }
     },
     {
-      "t": 0.028,
+      "t": 0.035,
       "phase": "protocol",
       "name": "agent_message:data",
       "ok": true,
@@ -70,7 +70,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:02e36a53",
+            "evidence_id": "sql:02989e2d",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT ROUND(SUM(pay_amount)/(CAST(julianday('2026-09-15')-julianday('2026-09-01')+1 AS REAL)),2) AS avg_daily_gmv FROM fact_order WHERE order_status='paid' AND order_date BETWEEN '2026-09-01' AND '2026-09-15'",
@@ -83,13 +83,13 @@
       }
     },
     {
-      "t": 0.028,
+      "t": 0.035,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.028,
+      "t": 0.035,
       "phase": "answer",
       "name": "done",
       "ok": true

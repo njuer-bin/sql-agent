@@ -70,7 +70,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:05be697d",
+            "evidence_id": "sql:0498cf74",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT COUNT(*) AS order_cnt FROM fact_order o WHERE o.order_date BETWEEN '2026-09-01' AND '2026-09-30'",

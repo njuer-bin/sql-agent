@@ -52,7 +52,7 @@
       }
     },
     {
-      "t": 0.055,
+      "t": 0.052,
       "phase": "protocol",
       "name": "agent_message:data",
       "ok": true,
@@ -72,7 +72,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:04a23157",
+            "evidence_id": "sql:00501d3f",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT p.category_l1, ROUND(SUM(o.pay_amount),2) AS gmv, ROUND(100.0*SUM(o.pay_amount)/(SELECT SUM(pay_amount) FROM fact_order WHERE order_status='paid' AND order_date BETWEEN '2026-09-01' AND '2026-09-30'),2) AS pct FROM fact_order o JOIN dim_product p ON p.product_id=o.product_id WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-09-01' AND '2026-09-30' GROUP BY p.category_l1 ORDER BY gmv DESC",
@@ -85,13 +85,13 @@
       }
     },
     {
-      "t": 0.055,
+      "t": 0.052,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.055,
+      "t": 0.052,
       "phase": "answer",
       "name": "done",
       "ok": true

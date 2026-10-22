@@ -52,7 +52,7 @@
       }
     },
     {
-      "t": 0.031,
+      "t": 0.033,
       "phase": "protocol",
       "name": "agent_message:data",
       "ok": true,
@@ -71,7 +71,7 @@
         },
         "evidence": [
           {
-            "evidence_id": "sql:04a7c582",
+            "evidence_id": "sql:0325ba77",
             "source": "sql",
             "ref": "tool_outputs[0]",
             "content": "SELECT r.region_name, ROUND(SUM(o.pay_amount),2) AS gmv FROM fact_order o JOIN dim_region r ON r.region_id=o.region_id WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-09-01' AND '2026-09-30' GROUP BY r.region_name ORDER BY gmv DESC",
@@ -84,13 +84,13 @@
       }
     },
     {
-      "t": 0.031,
+      "t": 0.033,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.031,
+      "t": 0.033,
       "phase": "answer",
       "name": "done",
       "ok": true
