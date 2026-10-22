@@ -28,7 +28,7 @@ from agent.protocol import (message_from_attribution, message_from_data,
                             message_from_retrieval, verify_claim_contacts)
 from agent.single_shot import ErrorFixAgent, SingleShotResult
 from agent.tools import ToolBox
-from agent.trace import Tracer
+from agent.trace import Tracer, execution_graph
 from agent.verifier_adv import AdversarialVerifier
 
 # --------------------------------------------------------------------------------------
@@ -706,5 +706,6 @@ class Supervisor:
                           "evidence_ids": msg.evidence_ids(),
                           "claim": (msg.claim.to_dict()
                                      if msg.claim else None),
-                          "issues": proto_issues}}]
+                          "issues": proto_issues}},
+            {"trace_graph": execution_graph(out, qid=qid)}]
         return out
