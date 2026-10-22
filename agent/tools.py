@@ -21,6 +21,7 @@ import yaml
 
 from agent.errors import GuardrailError, SqlToolError
 from agent.guardrails import FACT_TABLES, validate_sql
+from agent.sqlguard import validate_sql_ast
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(ROOT, "data", "warehouse", "warehouse.db")
@@ -65,6 +66,7 @@ class ToolBox:
         """
         # 护栏先行（即使连接还没建）
         statement = validate_sql(statement)
+        statement = validate_sql_ast(statement)
 
         if self._con is None:
             con = sqlite3.connect(
