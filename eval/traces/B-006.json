@@ -1,7 +1,43 @@
 {
   "qid": "B-006",
-  "n_events": 3,
+  "n_events": 5,
   "events": [
+    {
+      "t": 0.0,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "data",
+        "agents": [
+          [
+            "data"
+          ]
+        ],
+        "graph": {
+          "data": []
+        },
+        "stage_dag": {
+          "data": [
+            "sql_generate",
+            "repair_loop",
+            "answer_summarize"
+          ]
+        },
+        "constraints": {
+          "metric": "refund_rate",
+          "time_window": [
+            "2026-09-01",
+            "2026-09-30"
+          ]
+        },
+        "rationale": [
+          "question_type 显式标注=data",
+          "识别指标 refund_rate（约束取数口径）",
+          "解析出时间窗口（无时间窗问题由 NL2SQL 决策）"
+        ]
+      }
+    },
     {
       "t": 0.0,
       "phase": "route",
@@ -16,13 +52,45 @@
       }
     },
     {
-      "t": 0.031,
+      "t": 0.046,
+      "phase": "protocol",
+      "name": "agent_message:data",
+      "ok": true,
+      "detail": {
+        "agent": "data",
+        "plan_ref": "sql_generate",
+        "status": "ok",
+        "payload": {
+          "sql": "SELECT c.channel_name, ROUND(100.0*SUM(o.refund_amount)/SUM(o.pay_amount),2) AS refund_rate FROM fact_order o JOIN dim_channel c ON c.channel_id=o.channel_id WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-09-01' AND '2026-09-30' GROUP BY c.channel_name ORDER BY refund_rate DESC",
+          "columns": [
+            "channel_name",
+            "refund_rate"
+          ],
+          "rows": null,
+          "execution_error": null
+        },
+        "evidence": [
+          {
+            "evidence_id": "sql:0540906c",
+            "source": "sql",
+            "ref": "tool_outputs[0]",
+            "content": "SELECT c.channel_name, ROUND(100.0*SUM(o.refund_amount)/SUM(o.pay_amount),2) AS refund_rate FROM fact_order o JOIN dim_channel c ON c.channel_id=o.channel_id WHERE o.order_status='paid' AND o.order_date BETWEEN '2026-09-01' AND '2026-09-30' GROUP BY c.channel_name ORDER BY refund_rate DESC",
+            "provenance": {
+              "kind": "query"
+            }
+          }
+        ],
+        "claim": null
+      }
+    },
+    {
+      "t": 0.046,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.031,
+      "t": 0.046,
       "phase": "answer",
       "name": "done",
       "ok": true

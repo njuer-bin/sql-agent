@@ -1,7 +1,38 @@
 {
   "qid": "C-004",
-  "n_events": 3,
+  "n_events": 5,
   "events": [
+    {
+      "t": 0.0,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "memory",
+        "agents": [
+          [
+            "retrieval"
+          ]
+        ],
+        "graph": {
+          "retrieval": []
+        },
+        "stage_dag": {
+          "retrieval": [
+            "memory_retrieve",
+            "answer_compose",
+            "evidence_trace"
+          ]
+        },
+        "constraints": {
+          "metric": "new_buyer_count"
+        },
+        "rationale": [
+          "question_type 显式标注=memory",
+          "识别指标 new_buyer_count（约束取数口径）"
+        ]
+      }
+    },
     {
       "t": 0.0,
       "phase": "route",
@@ -16,13 +47,54 @@
       }
     },
     {
-      "t": 0.0,
+      "t": 0.001,
+      "phase": "protocol",
+      "name": "agent_message:retrieval",
+      "ok": true,
+      "detail": {
+        "agent": "retrieval",
+        "plan_ref": "memory_retrieve",
+        "status": "ok",
+        "payload": {
+          "memory_ids": [
+            "sem-newbuyer-v1",
+            "ep-2026-10-newbuyer"
+          ],
+          "answer": "根据记忆库：【新客数口径】新客数 = 统计周期内首次下单日期落在该周期内的去重用户数。判定依据是 dim_customer.first_order_date（首次成功支付订单的日期），【不是】register_date（注册日期）。新客不要求首单未退款，退款的新客仍算新客。经 user_li 于 2026-01-15 确认。；【2026-10 华东复购率下降分析（重要：非流失）】分析时间 2026-10-16。现象：华东区 2026-10 新客占比升至 24.7%（7~9 月稳定在 9~11%），同期复购率下降。根因：双十一预热期拉新活动，新客占比从约 10% 升至 24.7%。结论：【这是结构性变化，不是老客流失】——新客天然不复购，摊薄了复购率。已确认同期老客复购率保持稳定。应对：汇报时需拆分新客/老客分别看复购率，避免误判为流失预警。。"
+        },
+        "evidence": [
+          {
+            "evidence_id": "sem-newbuyer-v1",
+            "source": "memory",
+            "ref": "sem-newbuyer-v1",
+            "content": "根据记忆库：【新客数口径】新客数 = 统计周期内首次下单日期落在该周期内的去重用户数。判定依据是 dim_customer.first_order_date（首次成功支付订单的日期），【不是】register_date（注册日期）。新客不要求首单未退款，退款的新客仍算新客。经 user_li 于 2026-01-15 确认。；【2026-10 华东复购率下降分析（重要：非流失）】分析时间 2026-10-16。现象：华东区 2026-10 新客占比升至 24.7%（7~9 月稳定在 9~11%），同期复购率",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 0
+            }
+          },
+          {
+            "evidence_id": "ep-2026-10-newbuyer",
+            "source": "memory",
+            "ref": "ep-2026-10-newbuyer",
+            "content": "根据记忆库：【新客数口径】新客数 = 统计周期内首次下单日期落在该周期内的去重用户数。判定依据是 dim_customer.first_order_date（首次成功支付订单的日期），【不是】register_date（注册日期）。新客不要求首单未退款，退款的新客仍算新客。经 user_li 于 2026-01-15 确认。；【2026-10 华东复购率下降分析（重要：非流失）】分析时间 2026-10-16。现象：华东区 2026-10 新客占比升至 24.7%（7~9 月稳定在 9~11%），同期复购率",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 1
+            }
+          }
+        ],
+        "claim": null
+      }
+    },
+    {
+      "t": 0.001,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "answer",
       "name": "done",
       "ok": true

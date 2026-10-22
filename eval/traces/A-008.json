@@ -1,7 +1,43 @@
 {
   "qid": "A-008",
-  "n_events": 3,
+  "n_events": 5,
   "events": [
+    {
+      "t": 0.0,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "data",
+        "agents": [
+          [
+            "data"
+          ]
+        ],
+        "graph": {
+          "data": []
+        },
+        "stage_dag": {
+          "data": [
+            "sql_generate",
+            "repair_loop",
+            "answer_summarize"
+          ]
+        },
+        "constraints": {
+          "metric": "avg_resolve_hours",
+          "time_window": [
+            "2026-09-01",
+            "2026-09-30"
+          ]
+        },
+        "rationale": [
+          "question_type 显式标注=data",
+          "识别指标 avg_resolve_hours（约束取数口径）",
+          "解析出时间窗口（无时间窗问题由 NL2SQL 决策）"
+        ]
+      }
+    },
     {
       "t": 0.0,
       "phase": "route",
@@ -16,13 +52,44 @@
       }
     },
     {
-      "t": 0.001,
+      "t": 0.0,
+      "phase": "protocol",
+      "name": "agent_message:data",
+      "ok": true,
+      "detail": {
+        "agent": "data",
+        "plan_ref": "sql_generate",
+        "status": "ok",
+        "payload": {
+          "sql": "SELECT ROUND(AVG(resolve_hours),2) AS avg_hours FROM fact_service_ticket WHERE created_date BETWEEN '2026-09-01' AND '2026-09-30' AND is_resolved=1",
+          "columns": [
+            "avg_hours"
+          ],
+          "rows": null,
+          "execution_error": null
+        },
+        "evidence": [
+          {
+            "evidence_id": "sql:0088a463",
+            "source": "sql",
+            "ref": "tool_outputs[0]",
+            "content": "SELECT ROUND(AVG(resolve_hours),2) AS avg_hours FROM fact_service_ticket WHERE created_date BETWEEN '2026-09-01' AND '2026-09-30' AND is_resolved=1",
+            "provenance": {
+              "kind": "query"
+            }
+          }
+        ],
+        "claim": null
+      }
+    },
+    {
+      "t": 0.0,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.001,
+      "t": 0.0,
       "phase": "answer",
       "name": "done",
       "ok": true

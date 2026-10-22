@@ -1,7 +1,43 @@
 {
   "qid": "B-004",
-  "n_events": 3,
+  "n_events": 5,
   "events": [
+    {
+      "t": 0.0,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "data",
+        "agents": [
+          [
+            "data"
+          ]
+        ],
+        "graph": {
+          "data": []
+        },
+        "stage_dag": {
+          "data": [
+            "sql_generate",
+            "repair_loop",
+            "answer_summarize"
+          ]
+        },
+        "constraints": {
+          "metric": "new_buyer_count",
+          "time_window": [
+            "2026-09-01",
+            "2026-09-30"
+          ]
+        },
+        "rationale": [
+          "question_type 显式标注=data",
+          "识别指标 new_buyer_count（约束取数口径）",
+          "解析出时间窗口（无时间窗问题由 NL2SQL 决策）"
+        ]
+      }
+    },
     {
       "t": 0.0,
       "phase": "route",
@@ -16,13 +52,45 @@
       }
     },
     {
-      "t": 0.004,
+      "t": 0.002,
+      "phase": "protocol",
+      "name": "agent_message:data",
+      "ok": true,
+      "detail": {
+        "agent": "data",
+        "plan_ref": "sql_generate",
+        "status": "ok",
+        "payload": {
+          "sql": "SELECT r.region_name, COUNT(DISTINCT c.customer_id) AS new_buyers FROM dim_customer c JOIN dim_region r ON r.region_id=c.region_id WHERE c.first_order_date BETWEEN '2026-09-01' AND '2026-09-30' GROUP BY r.region_name ORDER BY new_buyers DESC",
+          "columns": [
+            "region_name",
+            "new_buyers"
+          ],
+          "rows": null,
+          "execution_error": null
+        },
+        "evidence": [
+          {
+            "evidence_id": "sql:03f1a1a0",
+            "source": "sql",
+            "ref": "tool_outputs[0]",
+            "content": "SELECT r.region_name, COUNT(DISTINCT c.customer_id) AS new_buyers FROM dim_customer c JOIN dim_region r ON r.region_id=c.region_id WHERE c.first_order_date BETWEEN '2026-09-01' AND '2026-09-30' GROUP BY r.region_name ORDER BY new_buyers DESC",
+            "provenance": {
+              "kind": "query"
+            }
+          }
+        ],
+        "claim": null
+      }
+    },
+    {
+      "t": 0.002,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.004,
+      "t": 0.002,
       "phase": "answer",
       "name": "done",
       "ok": true

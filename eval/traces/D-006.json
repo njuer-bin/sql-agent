@@ -1,7 +1,41 @@
 {
   "qid": "D-006",
-  "n_events": 3,
+  "n_events": 5,
   "events": [
+    {
+      "t": 0.0,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "memory",
+        "agents": [
+          [
+            "retrieval"
+          ]
+        ],
+        "graph": {
+          "retrieval": []
+        },
+        "stage_dag": {
+          "retrieval": [
+            "memory_retrieve",
+            "answer_compose",
+            "evidence_trace"
+          ]
+        },
+        "constraints": {
+          "time_window": [
+            "2026-04-01",
+            "2026-04-30"
+          ]
+        },
+        "rationale": [
+          "question_type 显式标注=memory",
+          "解析出时间窗口（无时间窗问题由 NL2SQL 决策）"
+        ]
+      }
+    },
     {
       "t": 0.0,
       "phase": "route",
@@ -16,13 +50,54 @@
       }
     },
     {
-      "t": 0.0,
+      "t": 0.001,
+      "phase": "protocol",
+      "name": "agent_message:retrieval",
+      "ok": true,
+      "detail": {
+        "agent": "retrieval",
+        "plan_ref": "memory_retrieve",
+        "status": "ok",
+        "payload": {
+          "memory_ids": [
+            "pr-channel-drilldown",
+            "ep-2026-04-douyin"
+          ],
+          "answer": "根据记忆库：【渠道分析下钻顺序】渠道维度分析固定顺序：自营APP → 自营小程序 → 天猫旗舰店 → 京东自营 → 抖音旗舰店 → 线下门店。注意：抖音旗舰店自 2026-04 起因主播合作发生结构性增长，做同比分析时需单独标注，不要和其他渠道混在一起算平均。；【2026-04 抖音渠道增长分析】分析时间 2026-05-06。现象：抖音旗舰店 GMV 从 2026-03 的 310.9 万升至 2026-04 的 814.9 万（2.62 倍）。根因：2026-04-01 起与头部主播签订带货合作（campaign C2026_DOUYIN，预算 150 万）。结论：渠道结构性增长，非促销脉冲，预计持续。。"
+        },
+        "evidence": [
+          {
+            "evidence_id": "pr-channel-drilldown",
+            "source": "memory",
+            "ref": "pr-channel-drilldown",
+            "content": "根据记忆库：【渠道分析下钻顺序】渠道维度分析固定顺序：自营APP → 自营小程序 → 天猫旗舰店 → 京东自营 → 抖音旗舰店 → 线下门店。注意：抖音旗舰店自 2026-04 起因主播合作发生结构性增长，做同比分析时需单独标注，不要和其他渠道混在一起算平均。；【2026-04 抖音渠道增长分析】分析时间 2026-05-06。现象：抖音旗舰店 GMV 从 2026-03 的 310.9 万升至 2026-04 的 814.9 万（2.62 倍）。根因：2026-04-01 起与头部主播签订带货合作（cam",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 0
+            }
+          },
+          {
+            "evidence_id": "ep-2026-04-douyin",
+            "source": "memory",
+            "ref": "ep-2026-04-douyin",
+            "content": "根据记忆库：【渠道分析下钻顺序】渠道维度分析固定顺序：自营APP → 自营小程序 → 天猫旗舰店 → 京东自营 → 抖音旗舰店 → 线下门店。注意：抖音旗舰店自 2026-04 起因主播合作发生结构性增长，做同比分析时需单独标注，不要和其他渠道混在一起算平均。；【2026-04 抖音渠道增长分析】分析时间 2026-05-06。现象：抖音旗舰店 GMV 从 2026-03 的 310.9 万升至 2026-04 的 814.9 万（2.62 倍）。根因：2026-04-01 起与头部主播签订带货合作（cam",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 1
+            }
+          }
+        ],
+        "claim": null
+      }
+    },
+    {
+      "t": 0.001,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "answer",
       "name": "done",
       "ok": true

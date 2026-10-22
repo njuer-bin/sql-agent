@@ -23,6 +23,9 @@ from agent.memory import DEFAULT_MEMORY_PATH, MemoryStore
 from agent.memory_agent import MemoryAgent
 from agent.nl2sql_offline import (build_offline_sql, detect_metric,
                                   detect_region, parse_time)
+from agent.plan import EXPERT_DAG, INTENT_TO_EXPERT, TaskPlan, build_stage_dag
+from agent.protocol import (message_from_attribution, message_from_data,
+                            message_from_retrieval, verify_claim_contacts)
 from agent.single_shot import ErrorFixAgent, SingleShotResult
 from agent.tools import ToolBox
 from agent.trace import Tracer
@@ -580,23 +583,86 @@ class Supervisor:
         return {"data": "data", "memory": "retrieval",
                 "attribution": "attribution"}.get(qt, "data")
 
+    # ---- v0.8 结构化调度：TaskPlan -----------------------------------------
+    def make_plan(self, question: dict) -> TaskPlan:
+        """规则路由升级为显式任务计划：意图/专家集合/依赖 DAG/约束/决策理由。"""
+        text = str(question.get("question") or "")
+        explicit = question.get("question_type") is not None
+        qt = question.get("question_type") or self._infer_qtype(question)
+        intent = {"data": "data", "memory": "memory",
+                  "attribution": "attribution"}.get(qt, "data")
+        expert = INTENT_TO_EXPERT[intent]
+        graph = {k: list(v) for k, v in EXPERT_DAG.get(expert,
+                                                        {expert: []}).items()}
+        rationale: list[str] = [
+            (f"question_type 显式标注={qt}" if explicit
+             else f"question_type 由文本推断={qt}"),
+        ]
+        constraints: dict = {}
+        try:
+            m = detect_metric(text)
+            if m:
+                constraints["metric"] = m
+                rationale.append(f"识别指标 {m}（约束取数口径）")
+        except Exception:
+            pass
+        try:
+            r = detect_region(text)
+            if r:
+                constraints["region"] = r
+                rationale.append("识别地区维度")
+        except Exception:
+            pass
+        try:
+            t = parse_time(text)
+            if t:
+                constraints["time_window"] = list(t)
+                rationale.append("解析出时间窗口（无时间窗问题由 NL2SQL 决策）")
+        except Exception:
+            pass
+        if expert == "attribution":
+            rationale.append("归因需口径/事件/流程证据 —— 依赖检索结论")
+        plan = TaskPlan(
+            qid=str(question.get("qid") or "plan"),
+            intent=intent,
+            agents=[expert],          # 当前拓扑：单主专家（协作期扩展）
+            graph=graph,
+            stage_dag=build_stage_dag(expert),
+            constraints=constraints,
+            rationale=rationale,
+        )
+        return plan
+
     def dag(self, expert_name: str) -> list[str]:
-        """任务 DAG（顺序流水；每步输出是下一步的输入）。"""
-        if expert_name == "retrieval":
-            return ["memory_retrieve", "answer_compose", "evidence_trace"]
-        if expert_name == "attribution":
-            return ["time_window", "sql_execute_current", "sql_execute_baseline",
-                    "memory_hypothesis", "drilldown", "verify_adversarial",
-                    "answer_compose"]
-        return ["sql_generate", "repair_loop", "answer_summarize"]
+        """任务 DAG（顺序流水；每步输出是下一步的输入）。向后兼容入口。"""
+        return next(iter(build_stage_dag(expert_name).values()))
 
     def answer(self, question: dict) -> SingleShotResult:
         qid = str(question.get("qid") or "run")
         tracer = Tracer(qid)
-        expert_name = self.route(question)
+        # 结构化调度：问题 → TaskPlan（意图/依赖/约束）→ 按 DAG 执行
+        plan = self.make_plan(question)
+        tracer.log("plan", "task_plan", detail={
+            "intent": plan.intent,
+            "agents": [plan.topological_order()],
+            "graph": {k: v for k, v in plan.graph.items()},
+            "stage_dag": {k: v for k, v in plan.stage_dag.items()},
+            "constraints": plan.constraints,
+            "rationale": plan.rationale,
+        })
+        expert_name = plan.agents[0]
         tracer.log("route", f"supervisor→{expert_name}",
                    detail={"dag": self.dag(expert_name)})
         out = self.experts[expert_name].answer(question)
+        # AgentMessage 协议：专家结构化输出信封 + Claim↔Evidence 校验留痕
+        msg = {"data": message_from_data, "retrieval": message_from_retrieval,
+               "attribution": message_from_attribution}[expert_name](out)
+        proto_issues = verify_claim_contacts(msg)
+        tracer.log("protocol", f"agent_message:{expert_name}",
+                   ok=not proto_issues, detail=msg.to_dict())
+        for issue in proto_issues:
+            tracer.log("protocol", f"claim_issue:{issue}", ok=False,
+                       error=issue)
         # 回填证据事件：纠错轨迹 / 检索 / 对抗验证裁定，全部可回放
         for h in (out.history or []):
             if isinstance(h, dict) and h.get("attempt") and "error_type" in h:
@@ -622,5 +688,16 @@ class Supervisor:
             tracer.log("answer", "done", ok=True)
         tracer.save()
         out.history = list(out.history or []) + [
-            {"supervisor": {"route": expert_name, "dag": self.dag(expert_name)}}]
+            {"supervisor": {"route": expert_name, "dag": self.dag(expert_name),
+                            "intent": plan.intent,
+                            "agents": plan.agents,
+                            "graph": plan.graph,
+                            "constraints": plan.constraints,
+                            "rationale": plan.rationale}},
+            {"protocol": {"agent": msg.agent, "plan_ref": msg.plan_ref,
+                          "status": msg.status,
+                          "evidence_ids": msg.evidence_ids(),
+                          "claim": (msg.claim.to_dict()
+                                     if msg.claim else None),
+                          "issues": proto_issues}}]
         return out

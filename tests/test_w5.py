@@ -44,7 +44,8 @@ def test_trace_records_and_replays(supervisor, tmp_path):
     events = replay(trace_path)
     assert len(events) >= 3
     names = [e["name"] for e in events]
-    assert "supervisor→attribution" in names[0] or "route" in events[0]["phase"]
+    assert ("task_plan" in names[0] and "supervisor→attribution" in names) \
+        or "route" in events[0]["phase"]
     # 时间窗口事件
     assert any("窗口" not in e["name"] or e["phase"] == "tool"
                for e in events) or True

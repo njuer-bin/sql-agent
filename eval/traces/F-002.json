@@ -1,7 +1,43 @@
 {
   "qid": "F-002",
-  "n_events": 4,
+  "n_events": 6,
   "events": [
+    {
+      "t": 0.0,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "memory",
+        "agents": [
+          [
+            "retrieval"
+          ]
+        ],
+        "graph": {
+          "retrieval": []
+        },
+        "stage_dag": {
+          "retrieval": [
+            "memory_retrieve",
+            "answer_compose",
+            "evidence_trace"
+          ]
+        },
+        "constraints": {
+          "metric": "repurchase_rate",
+          "time_window": [
+            "2026-08-01",
+            "2026-08-31"
+          ]
+        },
+        "rationale": [
+          "question_type 显式标注=memory",
+          "识别指标 repurchase_rate（约束取数口径）",
+          "解析出时间窗口（无时间窗问题由 NL2SQL 决策）"
+        ]
+      }
+    },
     {
       "t": 0.0,
       "phase": "route",
@@ -16,19 +52,104 @@
       }
     },
     {
-      "t": 0.029,
+      "t": 0.078,
+      "phase": "protocol",
+      "name": "agent_message:retrieval",
+      "ok": true,
+      "detail": {
+        "agent": "retrieval",
+        "plan_ref": "memory_retrieve",
+        "status": "ok",
+        "payload": {
+          "memory_ids": [
+            "sem-repurchase-v1",
+            "sem-repurchase-v2",
+            "pr-repurchase-v2-rule",
+            "sem-gmv-gross-v1",
+            "sem-sessions-unverified",
+            "ep-2026-10-newbuyer"
+          ],
+          "answer": "根据记忆库：【复购率口径 v1（已作废）】【已作废 v1】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【不剔除】退款用户（发生过退款的用户仍计入）。2026-08-28 被 v2 取代。；【复购率口径 v2（当前生效）】【当前生效 v2】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【剔除】在统计周期内发生过退款的用户（只统计净下单用户）。变更原因：业务方反馈退款用户会虚增复购率，导致与财务口径对不上。经 user_li 于 2026-08-28 确认，2026-09-01 起生效。；【算复购率必须剔除退款用户（2026-09 起）】从 2026-09-01 起，计算复购率时分子分母都必须剔除在统计周期内发生过退款的用户（只统计净下单用户）。SQL 实现：在 per_user 子查询里算出 SUM(refund_amount)，外层加 WHERE ref = 0。历史对比时注意：2026-08 及之前的数据用的是旧口径（不剔除），跨 9 月做趋势对比时【口径不可比】，需要做口径还原。；【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 refund_amount）。分母/口径经数据平台组 user_zhang 于 2025-11-20 确认。；【会话数口径（未确认）】会话数 = 统计周期内各渠道各地区的 sessions 之和（fact_web_traffic）。注意：该指标【尚未经业务方确认】，字典中未明确是否含跳出会话，使用前需向流量组确认。；【2026-10 华东复购率下降分析（重要：非流失）】分析时间 2026-10-16。现象：华东区 2026-10 新客占比升至 24.7%（7~9 月稳定在 9~11%），同期复购率下降。根因：双十一预热期拉新活动，新客占比从约 10% 升至 24.7%。结论：【这是结构性变化，不是老客流失】——新客天然不复购，摊薄了复购率。已确认同期老客复购率保持稳定。应对：汇报时需拆分新客/老客分别看复购率，避免误判为流失预警。。按当前生效口径取数结果：关于「年 月的复购率应该用哪个口径算？」的查询结果（列：repurchase_rate）：31.14"
+        },
+        "evidence": [
+          {
+            "evidence_id": "sem-repurchase-v1",
+            "source": "memory",
+            "ref": "sem-repurchase-v1",
+            "content": "根据记忆库：【复购率口径 v1（已作废）】【已作废 v1】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【不剔除】退款用户（发生过退款的用户仍计入）。2026-08-28 被 v2 取代。；【复购率口径 v2（当前生效）】【当前生效 v2】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 0
+            }
+          },
+          {
+            "evidence_id": "sem-repurchase-v2",
+            "source": "memory",
+            "ref": "sem-repurchase-v2",
+            "content": "根据记忆库：【复购率口径 v1（已作废）】【已作废 v1】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【不剔除】退款用户（发生过退款的用户仍计入）。2026-08-28 被 v2 取代。；【复购率口径 v2（当前生效）】【当前生效 v2】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 1
+            }
+          },
+          {
+            "evidence_id": "pr-repurchase-v2-rule",
+            "source": "memory",
+            "ref": "pr-repurchase-v2-rule",
+            "content": "根据记忆库：【复购率口径 v1（已作废）】【已作废 v1】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【不剔除】退款用户（发生过退款的用户仍计入）。2026-08-28 被 v2 取代。；【复购率口径 v2（当前生效）】【当前生效 v2】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 2
+            }
+          },
+          {
+            "evidence_id": "sem-gmv-gross-v1",
+            "source": "memory",
+            "ref": "sem-gmv-gross-v1",
+            "content": "根据记忆库：【复购率口径 v1（已作废）】【已作废 v1】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【不剔除】退款用户（发生过退款的用户仍计入）。2026-08-28 被 v2 取代。；【复购率口径 v2（当前生效）】【当前生效 v2】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 3
+            }
+          },
+          {
+            "evidence_id": "sem-sessions-unverified",
+            "source": "memory",
+            "ref": "sem-sessions-unverified",
+            "content": "根据记忆库：【复购率口径 v1（已作废）】【已作废 v1】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【不剔除】退款用户（发生过退款的用户仍计入）。2026-08-28 被 v2 取代。；【复购率口径 v2（当前生效）】【当前生效 v2】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 4
+            }
+          },
+          {
+            "evidence_id": "ep-2026-10-newbuyer",
+            "source": "memory",
+            "ref": "ep-2026-10-newbuyer",
+            "content": "根据记忆库：【复购率口径 v1（已作废）】【已作废 v1】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【不剔除】退款用户（发生过退款的用户仍计入）。2026-08-28 被 v2 取代。；【复购率口径 v2（当前生效）】【当前生效 v2】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 5
+            }
+          }
+        ],
+        "claim": null
+      }
+    },
+    {
+      "t": 0.078,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.029,
+      "t": 0.078,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.029,
+      "t": 0.078,
       "phase": "answer",
       "name": "done",
       "ok": true

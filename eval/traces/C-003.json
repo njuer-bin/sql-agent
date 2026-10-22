@@ -1,7 +1,38 @@
 {
   "qid": "C-003",
-  "n_events": 3,
+  "n_events": 5,
   "events": [
+    {
+      "t": 0.0,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "memory",
+        "agents": [
+          [
+            "retrieval"
+          ]
+        ],
+        "graph": {
+          "retrieval": []
+        },
+        "stage_dag": {
+          "retrieval": [
+            "memory_retrieve",
+            "answer_compose",
+            "evidence_trace"
+          ]
+        },
+        "constraints": {
+          "metric": "refund_amount"
+        },
+        "rationale": [
+          "question_type 显式标注=memory",
+          "识别指标 refund_amount（约束取数口径）"
+        ]
+      }
+    },
     {
       "t": 0.0,
       "phase": "route",
@@ -16,13 +47,98 @@
       }
     },
     {
-      "t": 0.0,
+      "t": 0.001,
+      "phase": "protocol",
+      "name": "agent_message:retrieval",
+      "ok": true,
+      "detail": {
+        "agent": "retrieval",
+        "plan_ref": "memory_retrieve",
+        "status": "ok",
+        "payload": {
+          "memory_ids": [
+            "sem-refund-rate-v1",
+            "sem-gmv-gross-v1",
+            "sem-gmv-net-v1",
+            "ep-2026-03-promo",
+            "ep-2026-09-logistics",
+            "sem-cancel-trap-v1"
+          ],
+          "answer": "根据记忆库：【退款率口径】退款率 = 统计周期内 SUM(refund_amount) / SUM(pay_amount)，仅统计 order_status='paid' 的订单。按金额算不按单量算（按单量算会明显更高）。经 user_wang 于 2026-02-01 确认。；【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 refund_amount）。分母/口径经数据平台组 user_zhang 于 2025-11-20 确认。；【GMV（净）口径】GMV（净）= 统计周期内所有 order_status='paid' 订单的 (pay_amount - refund_amount) 之和。已取消订单不计入。部分退款按实际退款额扣减，全额退款则该订单贡献为 0（但仍计入订单数）。经 user_zhang 于 2025-11-20 确认。；【2026-03 华东自营 GMV 暴涨分析】分析时间 2026-03-21。现象：2026-03-15~03-20 华东区自营渠道 GMV 达 98.6 万，是前一周（48.9 万）的 2.02 倍。根因：春季大促（campaign C2026_SPRING，补贴 120 万），大促日订单量放大 + 客单价 ×2.0。结论：属于计划内促销脉冲，非异常。已归档，无需告警。；【2026-09 华北退款率异常分析】分析时间 2026-09-16。现象：2026-09-10~09-14 华北区退款率升至 6.00%，而 9 月 1~9 日仅 1.21%（+4.79pp）；同期华北客服工单量上升约 300%，物流类工单占绝对多数。根因：华北仓 WMS 升级事故，发货延迟 3-5 天，引发集中退款与投诉。结论：外部履约事故，非商品或价格问题；建议对 9/10~9/14 华北订单做主动补偿。；【已取消订单的金额陷阱（重要）】fact_order 中 order_status='cancelled' 的订单正常情况下 pay_amount 应为 0。但【2026-06 全月】因支付回调重试缺陷，所有 cancelled 订单的 pay_amount 均未清零（285 单，合计 79.4 万，占当月 2.90%）。因此：任何金额聚合都必须加 order_status='paid' 过滤；若不过滤，2026-06 的 GMV 会被高估约 3%。该缺陷已于 2026-07-05 修复，历史数据未回刷，所以 6 月数据至今仍然需要过滤。。"
+        },
+        "evidence": [
+          {
+            "evidence_id": "sem-refund-rate-v1",
+            "source": "memory",
+            "ref": "sem-refund-rate-v1",
+            "content": "根据记忆库：【退款率口径】退款率 = 统计周期内 SUM(refund_amount) / SUM(pay_amount)，仅统计 order_status='paid' 的订单。按金额算不按单量算（按单量算会明显更高）。经 user_wang 于 2026-02-01 确认。；【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 r",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 0
+            }
+          },
+          {
+            "evidence_id": "sem-gmv-gross-v1",
+            "source": "memory",
+            "ref": "sem-gmv-gross-v1",
+            "content": "根据记忆库：【退款率口径】退款率 = 统计周期内 SUM(refund_amount) / SUM(pay_amount)，仅统计 order_status='paid' 的订单。按金额算不按单量算（按单量算会明显更高）。经 user_wang 于 2026-02-01 确认。；【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 r",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 1
+            }
+          },
+          {
+            "evidence_id": "sem-gmv-net-v1",
+            "source": "memory",
+            "ref": "sem-gmv-net-v1",
+            "content": "根据记忆库：【退款率口径】退款率 = 统计周期内 SUM(refund_amount) / SUM(pay_amount)，仅统计 order_status='paid' 的订单。按金额算不按单量算（按单量算会明显更高）。经 user_wang 于 2026-02-01 确认。；【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 r",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 2
+            }
+          },
+          {
+            "evidence_id": "ep-2026-03-promo",
+            "source": "memory",
+            "ref": "ep-2026-03-promo",
+            "content": "根据记忆库：【退款率口径】退款率 = 统计周期内 SUM(refund_amount) / SUM(pay_amount)，仅统计 order_status='paid' 的订单。按金额算不按单量算（按单量算会明显更高）。经 user_wang 于 2026-02-01 确认。；【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 r",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 3
+            }
+          },
+          {
+            "evidence_id": "ep-2026-09-logistics",
+            "source": "memory",
+            "ref": "ep-2026-09-logistics",
+            "content": "根据记忆库：【退款率口径】退款率 = 统计周期内 SUM(refund_amount) / SUM(pay_amount)，仅统计 order_status='paid' 的订单。按金额算不按单量算（按单量算会明显更高）。经 user_wang 于 2026-02-01 确认。；【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 r",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 4
+            }
+          },
+          {
+            "evidence_id": "sem-cancel-trap-v1",
+            "source": "memory",
+            "ref": "sem-cancel-trap-v1",
+            "content": "根据记忆库：【退款率口径】退款率 = 统计周期内 SUM(refund_amount) / SUM(pay_amount)，仅统计 order_status='paid' 的订单。按金额算不按单量算（按单量算会明显更高）。经 user_wang 于 2026-02-01 确认。；【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 r",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 5
+            }
+          }
+        ],
+        "claim": null
+      }
+    },
+    {
+      "t": 0.001,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "answer",
       "name": "done",
       "ok": true

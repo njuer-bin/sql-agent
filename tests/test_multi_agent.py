@@ -161,8 +161,23 @@ def test_supervisor_records_dag_in_history(sup):
     q = {"qid": "A-001", "question": "2026 年 9 月我们做了多少 GMV？",
          "question_type": "data"}
     r = sup.answer(q)
-    assert r.history and r.history[-1]["supervisor"]["route"] == "data"
+    entries = [h for h in (r.history or [])
+               if isinstance(h, dict) and "supervisor" in h]
+    assert entries and entries[-1]["supervisor"]["route"] == "data"
     assert r.rows
+
+
+def test_supervisor_records_protocol_message_in_history(sup):
+    """最后一条应是 AgentMessage 协议信封（Claim/Evidence 结构化输出）。"""
+    q = {"qid": "A-001a", "question": "2026 年 9 月我们做了多少 GMV？",
+         "question_type": "data"}
+    r = sup.answer(q)
+    last = list(r.history or [])[-1]
+    assert "protocol" in last, f"last entry keys={list(last)}"
+    p = last["protocol"]
+    assert p["agent"] == "data" and p["plan_ref"] == "sql_generate"
+    assert any(e.startswith("sql:") or e.startswith("rows:")
+               for e in p["evidence_ids"])
 
 
 def test_attribution_verifier_trace_recorded(sup):

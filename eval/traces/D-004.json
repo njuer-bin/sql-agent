@@ -1,7 +1,43 @@
 {
   "qid": "D-004",
-  "n_events": 4,
+  "n_events": 6,
   "events": [
+    {
+      "t": 0.0,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "memory",
+        "agents": [
+          [
+            "retrieval"
+          ]
+        ],
+        "graph": {
+          "retrieval": []
+        },
+        "stage_dag": {
+          "retrieval": [
+            "memory_retrieve",
+            "answer_compose",
+            "evidence_trace"
+          ]
+        },
+        "constraints": {
+          "metric": "gmv_gross",
+          "time_window": [
+            "2026-01-01",
+            "2026-12-31"
+          ]
+        },
+        "rationale": [
+          "question_type 显式标注=memory",
+          "识别指标 gmv_gross（约束取数口径）",
+          "解析出时间窗口（无时间窗问题由 NL2SQL 决策）"
+        ]
+      }
+    },
     {
       "t": 0.0,
       "phase": "route",
@@ -16,19 +52,93 @@
       }
     },
     {
-      "t": 0.026,
+      "t": 0.075,
+      "phase": "protocol",
+      "name": "agent_message:retrieval",
+      "ok": true,
+      "detail": {
+        "agent": "retrieval",
+        "plan_ref": "memory_retrieve",
+        "status": "ok",
+        "payload": {
+          "memory_ids": [
+            "sem-gmv-gross-v1",
+            "sem-gmv-net-v1",
+            "ep-2026-06-dataquality",
+            "ep-2026-03-promo",
+            "sem-cancel-trap-v1"
+          ],
+          "answer": "根据记忆库：【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 refund_amount）。分母/口径经数据平台组 user_zhang 于 2025-11-20 确认。；【GMV（净）口径】GMV（净）= 统计周期内所有 order_status='paid' 订单的 (pay_amount - refund_amount) 之和。已取消订单不计入。部分退款按实际退款额扣减，全额退款则该订单贡献为 0（但仍计入订单数）。经 user_zhang 于 2025-11-20 确认。；【2026-06 GMV 对不上账事件】分析时间 2026-07-02。现象：财务反馈 2026-06 GMV 比业务报表高约 3%。根因：支付回调重试逻辑缺陷，导致 6 月【所有】已取消订单的 pay_amount 未被清零（285 单，合计 79.4 万，占当月 2.90%）。修复方式：所有 GMV 计算必须加 order_status='paid' 过滤。该问题已于 2026-07-05 修复，但历史数据未回刷。；【2026-03 华东自营 GMV 暴涨分析】分析时间 2026-03-21。现象：2026-03-15~03-20 华东区自营渠道 GMV 达 98.6 万，是前一周（48.9 万）的 2.02 倍。根因：春季大促（campaign C2026_SPRING，补贴 120 万），大促日订单量放大 + 客单价 ×2.0。结论：属于计划内促销脉冲，非异常。已归档，无需告警。；【已取消订单的金额陷阱（重要）】fact_order 中 order_status='cancelled' 的订单正常情况下 pay_amount 应为 0。但【2026-06 全月】因支付回调重试缺陷，所有 cancelled 订单的 pay_amount 均未清零（285 单，合计 79.4 万，占当月 2.90%）。因此：任何金额聚合都必须加 order_status='paid' 过滤；若不过滤，2026-06 的 GMV 会被高估约 3%。该缺陷已于 2026-07-05 修复，历史数据未回刷，所以 6 月数据至今仍然需要过滤。。按当前生效口径取数结果：关于「今年 月我们的 GMV 为什么跟财务对不上？」的查询结果（列：gmv）：200,572,451.04"
+        },
+        "evidence": [
+          {
+            "evidence_id": "sem-gmv-gross-v1",
+            "source": "memory",
+            "ref": "sem-gmv-gross-v1",
+            "content": "根据记忆库：【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 refund_amount）。分母/口径经数据平台组 user_zhang 于 2025-11-20 确认。；【GMV（净）口径】GMV（净）= 统计周期内所有 order_status='paid' 订单的 (pay_amount - refund_amount) 之",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 0
+            }
+          },
+          {
+            "evidence_id": "sem-gmv-net-v1",
+            "source": "memory",
+            "ref": "sem-gmv-net-v1",
+            "content": "根据记忆库：【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 refund_amount）。分母/口径经数据平台组 user_zhang 于 2025-11-20 确认。；【GMV（净）口径】GMV（净）= 统计周期内所有 order_status='paid' 订单的 (pay_amount - refund_amount) 之",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 1
+            }
+          },
+          {
+            "evidence_id": "ep-2026-06-dataquality",
+            "source": "memory",
+            "ref": "ep-2026-06-dataquality",
+            "content": "根据记忆库：【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 refund_amount）。分母/口径经数据平台组 user_zhang 于 2025-11-20 确认。；【GMV（净）口径】GMV（净）= 统计周期内所有 order_status='paid' 订单的 (pay_amount - refund_amount) 之",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 2
+            }
+          },
+          {
+            "evidence_id": "ep-2026-03-promo",
+            "source": "memory",
+            "ref": "ep-2026-03-promo",
+            "content": "根据记忆库：【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 refund_amount）。分母/口径经数据平台组 user_zhang 于 2025-11-20 确认。；【GMV（净）口径】GMV（净）= 统计周期内所有 order_status='paid' 订单的 (pay_amount - refund_amount) 之",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 3
+            }
+          },
+          {
+            "evidence_id": "sem-cancel-trap-v1",
+            "source": "memory",
+            "ref": "sem-cancel-trap-v1",
+            "content": "根据记忆库：【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 refund_amount）。分母/口径经数据平台组 user_zhang 于 2025-11-20 确认。；【GMV（净）口径】GMV（净）= 统计周期内所有 order_status='paid' 订单的 (pay_amount - refund_amount) 之",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 4
+            }
+          }
+        ],
+        "claim": null
+      }
+    },
+    {
+      "t": 0.075,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.026,
+      "t": 0.075,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.026,
+      "t": 0.075,
       "phase": "answer",
       "name": "done",
       "ok": true

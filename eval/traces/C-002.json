@@ -1,7 +1,38 @@
 {
   "qid": "C-002",
-  "n_events": 3,
+  "n_events": 5,
   "events": [
+    {
+      "t": 0.0,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "memory",
+        "agents": [
+          [
+            "retrieval"
+          ]
+        ],
+        "graph": {
+          "retrieval": []
+        },
+        "stage_dag": {
+          "retrieval": [
+            "memory_retrieve",
+            "answer_compose",
+            "evidence_trace"
+          ]
+        },
+        "constraints": {
+          "metric": "aov"
+        },
+        "rationale": [
+          "question_type 显式标注=memory",
+          "识别指标 aov（约束取数口径）"
+        ]
+      }
+    },
     {
       "t": 0.0,
       "phase": "route",
@@ -16,13 +47,98 @@
       }
     },
     {
-      "t": 0.0,
+      "t": 0.001,
+      "phase": "protocol",
+      "name": "agent_message:retrieval",
+      "ok": true,
+      "detail": {
+        "agent": "retrieval",
+        "plan_ref": "memory_retrieve",
+        "status": "ok",
+        "payload": {
+          "memory_ids": [
+            "sem-aov-v1",
+            "sem-newbuyer-v1",
+            "sem-repurchase-v2",
+            "ep-2026-08-subsidy",
+            "pr-repurchase-v2-rule",
+            "sem-gmv-gross-v1"
+          ],
+          "answer": "根据记忆库：【客单价口径】客单价 = 统计周期内 GMV（毛） / 订单数。注意分母是【订单数】不是【下单用户数】——这是最常见的分歧点。分子用毛 GMV 不用净 GMV。业务方口头说的\"客单价\"有时指人均消费（GMV/用户数），两者在本数据集上相差约 1.8 倍。经 user_zhang 于 2025-11-20 确认。；【新客数口径】新客数 = 统计周期内首次下单日期落在该周期内的去重用户数。判定依据是 dim_customer.first_order_date（首次成功支付订单的日期），【不是】register_date（注册日期）。新客不要求首单未退款，退款的新客仍算新客。经 user_li 于 2026-01-15 确认。；【复购率口径 v2（当前生效）】【当前生效 v2】复购率 = 统计周期内下单次数>=2 的去重用户数 / 统计周期内下单去重用户数。基于 order_status='paid' 订单，按自然月统计。分子分母均【剔除】在统计周期内发生过退款的用户（只统计净下单用户）。变更原因：业务方反馈退款用户会虚增复购率，导致与财务口径对不上。经 user_li 于 2026-08-28 确认，2026-09-01 起生效。；【2026-08 华东天猫/京东客单价下降分析】分析时间 2026-08-05。现象：华东区天猫旗舰店 + 京东自营的客单价从 7 月的 2823 元降至 8 月的约 2181 元（比值 0.772）。根因：华东第三方补贴活动 C2026_EAST_3P 于 2026-07-31 到期，补贴归零（该活动预算 200 万、补贴 175 万）。注意：抖音旗舰店【不在此效应范围内】，同期抖音因主播合作在增长。结论：补贴退坡导致实付金额下降，订单量未受影响，属预期内变化。；【算复购率必须剔除退款用户（2026-09 起）】从 2026-09-01 起，计算复购率时分子分母都必须剔除在统计周期内发生过退款的用户（只统计净下单用户）。SQL 实现：在 per_user 子查询里算出 SUM(refund_amount)，外层加 WHERE ref = 0。历史对比时注意：2026-08 及之前的数据用的是旧口径（不剔除），跨 9 月做趋势对比时【口径不可比】，需要做口径还原。；【GMV（毛）口径】GMV（毛）= 统计周期内所有 order_status='paid' 订单的 pay_amount 之和。不含已取消订单（order_status='cancelled'）；含已支付后发生退款的订单（不扣减 refund_amount）。分母/口径经数据平台组 user_zhang 于 2025-11-20 确认。。"
+        },
+        "evidence": [
+          {
+            "evidence_id": "sem-aov-v1",
+            "source": "memory",
+            "ref": "sem-aov-v1",
+            "content": "根据记忆库：【客单价口径】客单价 = 统计周期内 GMV（毛） / 订单数。注意分母是【订单数】不是【下单用户数】——这是最常见的分歧点。分子用毛 GMV 不用净 GMV。业务方口头说的\"客单价\"有时指人均消费（GMV/用户数），两者在本数据集上相差约 1.8 倍。经 user_zhang 于 2025-11-20 确认。；【新客数口径】新客数 = 统计周期内首次下单日期落在该周期内的去重用户数。判定依据是 dim_customer.first_order_date（首次成功支付订单的日期），【不是】reg",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 0
+            }
+          },
+          {
+            "evidence_id": "sem-newbuyer-v1",
+            "source": "memory",
+            "ref": "sem-newbuyer-v1",
+            "content": "根据记忆库：【客单价口径】客单价 = 统计周期内 GMV（毛） / 订单数。注意分母是【订单数】不是【下单用户数】——这是最常见的分歧点。分子用毛 GMV 不用净 GMV。业务方口头说的\"客单价\"有时指人均消费（GMV/用户数），两者在本数据集上相差约 1.8 倍。经 user_zhang 于 2025-11-20 确认。；【新客数口径】新客数 = 统计周期内首次下单日期落在该周期内的去重用户数。判定依据是 dim_customer.first_order_date（首次成功支付订单的日期），【不是】reg",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 1
+            }
+          },
+          {
+            "evidence_id": "sem-repurchase-v2",
+            "source": "memory",
+            "ref": "sem-repurchase-v2",
+            "content": "根据记忆库：【客单价口径】客单价 = 统计周期内 GMV（毛） / 订单数。注意分母是【订单数】不是【下单用户数】——这是最常见的分歧点。分子用毛 GMV 不用净 GMV。业务方口头说的\"客单价\"有时指人均消费（GMV/用户数），两者在本数据集上相差约 1.8 倍。经 user_zhang 于 2025-11-20 确认。；【新客数口径】新客数 = 统计周期内首次下单日期落在该周期内的去重用户数。判定依据是 dim_customer.first_order_date（首次成功支付订单的日期），【不是】reg",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 2
+            }
+          },
+          {
+            "evidence_id": "ep-2026-08-subsidy",
+            "source": "memory",
+            "ref": "ep-2026-08-subsidy",
+            "content": "根据记忆库：【客单价口径】客单价 = 统计周期内 GMV（毛） / 订单数。注意分母是【订单数】不是【下单用户数】——这是最常见的分歧点。分子用毛 GMV 不用净 GMV。业务方口头说的\"客单价\"有时指人均消费（GMV/用户数），两者在本数据集上相差约 1.8 倍。经 user_zhang 于 2025-11-20 确认。；【新客数口径】新客数 = 统计周期内首次下单日期落在该周期内的去重用户数。判定依据是 dim_customer.first_order_date（首次成功支付订单的日期），【不是】reg",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 3
+            }
+          },
+          {
+            "evidence_id": "pr-repurchase-v2-rule",
+            "source": "memory",
+            "ref": "pr-repurchase-v2-rule",
+            "content": "根据记忆库：【客单价口径】客单价 = 统计周期内 GMV（毛） / 订单数。注意分母是【订单数】不是【下单用户数】——这是最常见的分歧点。分子用毛 GMV 不用净 GMV。业务方口头说的\"客单价\"有时指人均消费（GMV/用户数），两者在本数据集上相差约 1.8 倍。经 user_zhang 于 2025-11-20 确认。；【新客数口径】新客数 = 统计周期内首次下单日期落在该周期内的去重用户数。判定依据是 dim_customer.first_order_date（首次成功支付订单的日期），【不是】reg",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 4
+            }
+          },
+          {
+            "evidence_id": "sem-gmv-gross-v1",
+            "source": "memory",
+            "ref": "sem-gmv-gross-v1",
+            "content": "根据记忆库：【客单价口径】客单价 = 统计周期内 GMV（毛） / 订单数。注意分母是【订单数】不是【下单用户数】——这是最常见的分歧点。分子用毛 GMV 不用净 GMV。业务方口头说的\"客单价\"有时指人均消费（GMV/用户数），两者在本数据集上相差约 1.8 倍。经 user_zhang 于 2025-11-20 确认。；【新客数口径】新客数 = 统计周期内首次下单日期落在该周期内的去重用户数。判定依据是 dim_customer.first_order_date（首次成功支付订单的日期），【不是】reg",
+            "provenance": {
+              "tool_index": 0,
+              "slot": 5
+            }
+          }
+        ],
+        "claim": null
+      }
+    },
+    {
+      "t": 0.001,
       "phase": "retrieve",
       "name": "memory_research",
       "ok": true
     },
     {
-      "t": 0.0,
+      "t": 0.001,
       "phase": "answer",
       "name": "done",
       "ok": true

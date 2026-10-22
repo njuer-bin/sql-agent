@@ -1,7 +1,43 @@
 {
   "qid": "A-006",
-  "n_events": 3,
+  "n_events": 5,
   "events": [
+    {
+      "t": 0.0,
+      "phase": "plan",
+      "name": "task_plan",
+      "ok": true,
+      "detail": {
+        "intent": "data",
+        "agents": [
+          [
+            "data"
+          ]
+        ],
+        "graph": {
+          "data": []
+        },
+        "stage_dag": {
+          "data": [
+            "sql_generate",
+            "repair_loop",
+            "answer_summarize"
+          ]
+        },
+        "constraints": {
+          "metric": "gmv_gross",
+          "time_window": [
+            "2026-01-01",
+            "2026-12-31"
+          ]
+        },
+        "rationale": [
+          "question_type 显式标注=data",
+          "识别指标 gmv_gross（约束取数口径）",
+          "解析出时间窗口（无时间窗问题由 NL2SQL 决策）"
+        ]
+      }
+    },
     {
       "t": 0.0,
       "phase": "route",
@@ -16,13 +52,45 @@
       }
     },
     {
-      "t": 0.082,
+      "t": 0.079,
+      "phase": "protocol",
+      "name": "agent_message:data",
+      "ok": true,
+      "detail": {
+        "agent": "data",
+        "plan_ref": "sql_generate",
+        "status": "ok",
+        "payload": {
+          "sql": "SELECT strftime('%Y-%m', order_date) AS ym, ROUND(SUM(pay_amount),2) AS gmv FROM fact_order WHERE order_status='paid' AND order_date >= '2026-01-01' AND strftime('%Y-%m', order_date) <= '2026-12' GROUP BY ym ORDER BY gmv DESC LIMIT 1",
+          "columns": [
+            "ym",
+            "gmv"
+          ],
+          "rows": null,
+          "execution_error": null
+        },
+        "evidence": [
+          {
+            "evidence_id": "sql:027a53d8",
+            "source": "sql",
+            "ref": "tool_outputs[0]",
+            "content": "SELECT strftime('%Y-%m', order_date) AS ym, ROUND(SUM(pay_amount),2) AS gmv FROM fact_order WHERE order_status='paid' AND order_date >= '2026-01-01' AND strftime('%Y-%m', order_date) <= '2026-12' GROUP BY ym ORDER BY gmv DESC LIMIT 1",
+            "provenance": {
+              "kind": "query"
+            }
+          }
+        ],
+        "claim": null
+      }
+    },
+    {
+      "t": 0.079,
       "phase": "tool",
       "name": "tool_output",
       "ok": true
     },
     {
-      "t": 0.082,
+      "t": 0.079,
       "phase": "answer",
       "name": "done",
       "ok": true
