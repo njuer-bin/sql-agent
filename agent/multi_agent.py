@@ -240,6 +240,13 @@ class AttributionExpert:
                 s += 2.0
             if region and region in kws:
                 s += 2.0
+            elif not region:
+                # region 未识别时的兜底：提问词面命中事件关键词（如「抖音」）
+                # 仍给满额分，避免通道类事件被漏检
+                for k in kws:
+                    if k != month_tok and len(k) >= 2 and k in text:
+                        s += 2.0
+                        break
             if m_big is not None:
                 from agent.memory import _bigrams
                 for k in kws:
